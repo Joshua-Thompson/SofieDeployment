@@ -1,6 +1,7 @@
 """`main` is the top level module for your Flask application."""
 
 # Import the Flask Framework
+from flask import render_template
 from flask import Flask
 app = Flask(__name__)
 # Note: We don't need to call run() since our application is embedded within
@@ -10,7 +11,8 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
-    return '---Sofie Biosciences Software Deployment Platform---'
+    #return '---Sofie Biosciences Software Deployment Platform---'
+    return render_template('index.html');
 
 
 @app.errorhandler(404)
