@@ -1,15 +1,24 @@
 import httplib
 import socket
 import time
+import sys
+import logging
 
 import paramiko
 from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
 
+
+
 ELIXYS_HOST_IP = "192.168.100.101"
 DECRYPTION_KEY = '1234567890123456'
 Port = 22
+
+logger = logging.getLogger("installer")
+logger.setLevel(logging.DEBUG)
+std_out = logging.StreamHandler(sys.stdout)
+logger.addHandler(std_out)
 
 class Updater(object):
     def __init__(self, hostname, port):
@@ -54,8 +63,10 @@ class Updater(object):
         try:
             newest_elixys_version = "elixys_uploader"
             newest_elixys_version_path =  "%s/%s" % (self.sftp.getcwd(), newest_elixys_version) #"%s/pyelixys_v%s" % self.sftp.getcwd(), newest_elixys_version
+            logger.info("Creating new Elixys version %s" % newest_elixys_version )
             self.sftp.mkdir(newest_elixys_version)
         except:
+            logger.warn("This version already exists.  Would you like to reinstall it?")
             do_reinstall = input('This version of Elixys already exists, would you like to re-install it? (y/n)')
             if do_reinstall.upper() == 'Y' or do_reinstall.upper() == 'YES':
                 old_version_new_name = home_dir + str(time.time()) + newest_elixys_version
@@ -69,12 +80,15 @@ class Updater(object):
         for file_name in zip.namelist()[1:]:
             application_name = '/'.join(file_name.split('/')[1:])
             if application_name.endswith("/"):
+                logger.info("Creating folder %s" % application_name)
                 self.sftp.mkdir(application_name)
             else:
+                logger.info("Creating file %s" % application_name)
                 zip_file_ext = zip.open(file_name)
                 self.sftp.putfo(zip_file_ext, application_name)
 
         if old_latest_version:
+            logger.info("Copying the inherited files from previous version")
             self.copy_important_legacy_data_to_new_version(old_version_path, newest_elixys_version_path)
         return True
 
@@ -94,36 +108,41 @@ def validate_elixys_is_up():
 
 def do_install(file_path):
     try:
+        logger.info("Installing from %s" % file_path)
         validate_elixys_is_up()
         possible_username_passwords = [("sofiebio","sofiebio"),
                                        ("sofiebio", "ThorsHammer42!"),
                                        ("sofie", "sofiebio"),
                                        ("sofie", "ThorsHammer42!")]
         updater = Updater(ELIXYS_HOST_IP, Port)
+        logger.info("Authenticating into the CBOX")
         updater.get_elixys_connection(possible_username_passwords)
+        logger.info("Successfully authenticated")
         try:
             updated = updater.copy_elixys_to_machine(file_path)
             if updated:
-                print "You may restart your Elixys machine now"
+                logger.info("You may restart your Elixys machine now")
         except Exception as e:
             print str(e)
-            print "Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem."
+            logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
         finally:
             updater.connection.close()
     except socket.timeout:
-        print "Could not validate Elixys connection.\n" + \
+        msg = "Could not validate Elixys connection.\n" + \
               "You are most likely not on the same network.\n" + \
               "Ensure you are connected to the Elixys router.\n" + \
               "If you are connected via WIFI, it might be worth connecting to it via Ethernet.\n" + \
               "If problems continue to persist please contact SofieBio Sciences."
+        logger.error(msg)
     except socket.error:
-        print "Could not validate Elixys connection.\n" + \
+        msg = "Could not validate Elixys connection.\n" + \
               "Is Elixys up and running?\n" + \
               "If you just turned Elixys on please give it time(2 minutes) to boot up before trying this again.\n" + \
               "You can validate the Elixys is up by opening the Elixys app and viewing the login screen.  Please try again once you can see the Elixys app.\n\n" + \
               "If problems continue to persist please contact SofieBio Sciences."
+        logger.error(msg)
     except Exception as e:
-        print "Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem"
+        logger.error("Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem")
 
 if __name__ == "__main__":
     downloaded_link_url = "/home/jcatterson/Downloads/download.zip"
