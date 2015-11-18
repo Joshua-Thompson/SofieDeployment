@@ -92,7 +92,7 @@ def validate_elixys_is_up():
     elixys_connection.connect()
     elixys_connection.close()
 
-if __name__ == "__main__":
+def do_install(file_path):
     try:
         validate_elixys_is_up()
         possible_username_passwords = [("sofiebio","sofiebio"),
@@ -102,10 +102,7 @@ if __name__ == "__main__":
         updater = Updater(ELIXYS_HOST_IP, Port)
         updater.get_elixys_connection(possible_username_passwords)
         try:
-            downloaded_link_url = "/home/jcatterson/Downloads/download.zip"
-            usr_zip_path = input("Type the path the Elixys zip file")
-            downloaded_link_url = usr_zip_path if usr_zip_path != "" else downloaded_link_url
-            updated = updater.copy_elixys_to_machine(downloaded_link_url)
+            updated = updater.copy_elixys_to_machine(file_path)
             if updated:
                 print "You may restart your Elixys machine now"
         except Exception as e:
@@ -127,3 +124,9 @@ if __name__ == "__main__":
               "If problems continue to persist please contact SofieBio Sciences."
     except Exception as e:
         print "Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem"
+
+if __name__ == "__main__":
+    downloaded_link_url = "/home/jcatterson/Downloads/download.zip"
+    usr_zip_path = input("Type the path the Elixys zip file")
+    downloaded_link_url = usr_zip_path if usr_zip_path != "" else downloaded_link_url
+    do_install(downloaded_link_url)
