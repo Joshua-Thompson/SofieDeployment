@@ -5,6 +5,8 @@ import sys
 import logging
 
 import paramiko
+import time
+from threading import Event
 from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
@@ -19,6 +21,9 @@ logger = logging.getLogger("installer")
 logger.setLevel(logging.DEBUG)
 std_out = logging.StreamHandler(sys.stdout)
 logger.addHandler(std_out)
+
+abort = Event()
+overwrite_prompt = Event()
 
 class Updater(object):
     def __init__(self, hostname, port):
@@ -67,13 +72,20 @@ class Updater(object):
             self.sftp.mkdir(newest_elixys_version)
         except:
             logger.warn("This version already exists.  Would you like to reinstall it?")
-            do_reinstall = input('This version of Elixys already exists, would you like to re-install it? (y/n)')
-            if do_reinstall.upper() == 'Y' or do_reinstall.upper() == 'YES':
+            overwrite_prompt.set()
+            while overwrite_prompt.isSet() and not abort.isSet():
+                time.sleep(.5)
+
+            if abort.isSet():
+                logger.info("Cancelling the install.")
+                abort.clear()
+                overwrite_prompt.clear()
+                return False
+            else:
+                logger.info("Over-writing version %s." % newest_elixys_version)
                 old_version_new_name = home_dir + str(time.time()) + newest_elixys_version
                 self.sftp.rename(newest_elixys_version, old_version_new_name)
                 self.sftp.mkdir(newest_elixys_version)
-            else:
-                return False
 
         self.sftp.chdir(newest_elixys_version)
 
@@ -122,6 +134,8 @@ def do_install(file_path):
             updated = updater.copy_elixys_to_machine(file_path)
             if updated:
                 logger.info("You may restart your Elixys machine now")
+            else:
+                logger.info("Install has been cancelled")
         except Exception as e:
             print str(e)
             logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
