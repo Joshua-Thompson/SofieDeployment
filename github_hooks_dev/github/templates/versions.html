@@ -1,0 +1,32 @@
+<html>
+    <head>
+    </head>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-debug.js"></script>
+    <script type="text/javascript">
+        var versions = JSON.parse({{releases|tojson|safe}});
+    </script>
+    <script src="{{url_for('github.static',filename='versions.js')}}"></script>
+
+    </script>
+    <script>
+        $(function(){
+            initVersions(versions);
+            ko.applyBindings(versions);
+        });
+    </script>
+
+    <style>
+        .version{
+            margin-top: 10px;
+        }
+    </style>
+
+    <body>
+        {% include 'version.html' %}
+        <div id="sofie_versions">
+            <span data-bind="template: { name : 'github_versions', foreach: versions, as: 'release'}"></span>
+        </div>
+    </body>
+</html>
