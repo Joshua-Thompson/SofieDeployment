@@ -72,7 +72,10 @@ class Updater(object):
             newest_elixys_version_path =  "%s/%s_v%s" % (current_directory, app_name, newest_elixys_version)
             logger.info("Installing Elixys version %s" % newest_elixys_version )
             self.sftp.mkdir(newest_elixys_version)
-        except:
+        except KeyError as e:
+            logger.error("Corrupted Copy of Elixys.  Please re-download a copy")
+            return False
+        except IOError:
             logger.warn("This version already exists.  Would you like to reinstall it?")
             overwrite_prompt.set()
             while overwrite_prompt.isSet() and not abort.isSet():
@@ -151,6 +154,7 @@ def do_install(file_path):
             else:
                 logger.info("Install has been cancelled")
         except Exception as e:
+            logger.error("Error %s" % str(e))
             logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
         finally:
             updater.connection.close()
@@ -169,6 +173,7 @@ def do_install(file_path):
               "If problems continue to persist please contact SofieBio Sciences."
         logger.error(msg)
     except Exception as e:
+        logger.error("Error: %s" % str(e))
         logger.error("Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem")
 
 if __name__ == "__main__":
