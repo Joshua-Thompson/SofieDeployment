@@ -70,8 +70,9 @@ class Updater(object):
             app_name, newest_elixys_version = self.determine_elixys_version(zip)
             current_directory = self.sftp.getcwd()
             newest_elixys_version_path =  "%s/%s_v%s" % (current_directory, app_name, newest_elixys_version)
+            logger.info("Installing at %s" % newest_elixys_version_path)
             logger.info("Installing Elixys version %s" % newest_elixys_version )
-            self.sftp.mkdir(newest_elixys_version)
+            self.sftp.mkdir(newest_elixys_version_path)
         except KeyError as e:
             logger.error("Corrupted Copy of Elixys.  Please re-download a copy")
             return False
@@ -92,7 +93,7 @@ class Updater(object):
                 self.sftp.rename(newest_elixys_version, old_version_new_name)
                 self.sftp.mkdir(newest_elixys_version)
 
-        self.sftp.chdir(newest_elixys_version)
+        self.sftp.chdir(newest_elixys_version_path)
 
         for file_name in zip.namelist()[1:]:
             application_name = '/'.join(file_name.split('/')[1:])
