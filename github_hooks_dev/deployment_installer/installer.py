@@ -16,7 +16,7 @@ class InstallHandler(logging.Handler):
 
     def handle(self, record):
         if self.qtText:
-            self.qtText.setText(record.msg)
+            self.qtText.append(record.msg)
 
     def setLoggerText(self, qtText):
         self.qtText = qtText
@@ -33,7 +33,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.show()
 
     def initUI(self):
-        self.setFixedSize(1000,800)
+        self.setFixedSize(1000,600)
         self.setWindowTitle('Elixys Installer')
         self.mainWidget=QtGui.QWidget(self)
         layout = QtGui.QVBoxLayout()
@@ -46,7 +46,9 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.cancel_install.setFixedSize(975,100)
         self.show_buttons(False)
 
-        self.status_label = QtGui.QLabel("", self)
+        self.status_label = QtGui.QTextEdit("", self)
+        self.status_label.setFixedSize(975, 200)
+        self.status_label.setReadOnly(True)
 
         layout.addWidget(self.dialog_button)
         layout.addWidget(self.status_label)
