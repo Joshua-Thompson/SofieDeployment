@@ -89,9 +89,9 @@ class Updater(object):
                 return False
             else:
                 logger.info("Over-writing version %s." % newest_elixys_version)
-                old_version_new_name = home_dir + str(time.time()) + newest_elixys_version
-                self.sftp.rename(newest_elixys_version, old_version_new_name)
-                self.sftp.mkdir(newest_elixys_version)
+                old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + newest_elixys_version
+                self.sftp.rename(newest_elixys_version_path, old_version_new_name)
+                self.sftp.mkdir(newest_elixys_version_path)
 
         self.sftp.chdir(newest_elixys_version_path)
 
