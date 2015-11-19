@@ -33,13 +33,17 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.show()
 
     def initUI(self):
+        self.setFixedSize(1000,800)
         self.setWindowTitle('Elixys Installer')
         self.mainWidget=QtGui.QWidget(self)
         layout = QtGui.QVBoxLayout()
 
         self.dialog_button = QtGui.QPushButton('Select Elixys Install',self)
+        self.dialog_button.setFixedSize(975,100)
         self.overwrite_copy = QtGui.QPushButton('Yes',self)
+        self.overwrite_copy.setFixedSize(975,100)
         self.cancel_install = QtGui.QPushButton('No',self)
+        self.cancel_install.setFixedSize(975,100)
         self.show_buttons(False)
 
         self.status_label = QtGui.QLabel("", self)
@@ -98,7 +102,9 @@ class MonitorInstall(QtCore.QThread):
 def main():
     app = QtGui.QApplication(sys.argv)
     ex = ElixysInstaller()
-    sys.exit(app.exec_())
+    app.exec_()
+    sys.exit(0)
+
 
 if __name__ == '__main__':
     main()
