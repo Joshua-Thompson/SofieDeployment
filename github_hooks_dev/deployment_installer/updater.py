@@ -10,6 +10,7 @@ from threading import Event
 from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
+from configobj import ConfigObj
 
 
 
@@ -66,9 +67,10 @@ class Updater(object):
         zip = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
 
         try:
-            newest_elixys_version = "elixys_uploader"
-            newest_elixys_version_path =  "%s/%s" % (self.sftp.getcwd(), newest_elixys_version) #"%s/pyelixys_v%s" % self.sftp.getcwd(), newest_elixys_version
-            logger.info("Creating new Elixys version %s" % newest_elixys_version )
+            app_name, newest_elixys_version = self.determine_elixys_version(zip)
+            current_directory = self.sftp.getcwd()
+            newest_elixys_version_path =  "%s/%s_v%s" % (current_directory, app_name, newest_elixys_version)
+            logger.info("Installing Elixys version %s" % newest_elixys_version )
             self.sftp.mkdir(newest_elixys_version)
         except:
             logger.warn("This version already exists.  Would you like to reinstall it?")
@@ -104,6 +106,18 @@ class Updater(object):
             self.copy_important_legacy_data_to_new_version(old_version_path, newest_elixys_version_path)
         return True
 
+    def determine_elixys_version(self, zip):
+        root_dir = zip.namelist()[0]
+        try:
+            file = zip.open("%ssrc/pyelixys/hal/templates/hwconf_hardware.ini" % root_dir)
+        except KeyError as e:
+            file = zip.open("%spyelixys/hal/templates/hwconf_hardware.ini" % root_dir)
+
+        config = ConfigObj(file)
+        app_name = config["Version"]["name"]
+        ver = config["Version"]["version"]
+        return app_name, ver
+
     def copy_important_legacy_data_to_new_version(self, old_version_path, new_version_path):
         hwconf_old_path = "%s/%s" % (old_version_path,"pyelixys/hal/hwconf.ini")
         hwconf_new_path = "%s/%s" % (new_version_path,"pyelixys/hal/hwconf.ini")
@@ -137,7 +151,6 @@ def do_install(file_path):
             else:
                 logger.info("Install has been cancelled")
         except Exception as e:
-            print str(e)
             logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
         finally:
             updater.connection.close()
