@@ -13,7 +13,7 @@ from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
 
-ELIXYS_HOST_IP = "192.168.100.101"
+ELIXYS_HOST_IP = "192.168.2.10"#"192.168.100.101"
 DECRYPTION_KEY = '1234567890123456'
 ELIXYS_INSTALL_DIR = './Desktop/elixys'
 
@@ -57,7 +57,7 @@ class Updater(object):
                 username, password = possible_connections.pop()
                 self.authenticate(username, password)
             else:
-                raise "Failed to authenticate"
+                raise Exception("Failed to authenticate")
         except paramiko.ssh_exception.AuthenticationException:
             return self.get_elixys_connection(possible_connections)
 
@@ -99,6 +99,7 @@ class Updater(object):
                 logger.info("Over-writing version %s." % str(self.updating_from_version))
                 old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + str(self.updating_to_version)
                 self.sftp.rename(self.updating_from_version.path, old_version_new_name)
+                self.updating_from_version.path = old_version_new_name
                 self.sftp.mkdir(self.updating_to_version.path)
 
         self.sftp.chdir(self.updating_to_version.path)
@@ -152,10 +153,11 @@ def do_install(file_path):
             else:
                 logger.info("Install has been cancelled")
         except Exception as e:
-            logger.error("Error %s" % str(e))
+            logger.error("Error: " + str(e))
             logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
         finally:
             updater.connection.close()
+            updater.ssh_client.close()
     except socket.timeout:
         msg = "Could not validate Elixys connection.\n" + \
               "You are most likely not on the same network.\n" + \
@@ -171,7 +173,7 @@ def do_install(file_path):
               "If problems continue to persist please contact SofieBio Sciences."
         logger.error(msg)
     except Exception as e:
-        logger.error("Error: %s" % str(e))
+        logger.error("Error: " + str(e))
         logger.error("Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem")
 
 if __name__ == "__main__":
