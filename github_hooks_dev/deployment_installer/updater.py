@@ -10,8 +10,6 @@ from threading import Event
 from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
-from configobj import ConfigObj
-
 
 
 ELIXYS_HOST_IP = "192.168.100.101"
@@ -33,6 +31,8 @@ class Updater(object):
         self.connection = None
         self.ssh_client = None
         self.sftp = None
+        self.updating_to_version = None
+        self.updating_from_version = None
 
     def authenticate(self, username, password):
         self.connection = paramiko.Transport((self.hostname, self.port))
@@ -52,7 +52,7 @@ class Updater(object):
             else:
                 raise "Failed to authenticate"
         except paramiko.ssh_exception.AuthenticationException:
-            return get_elixys_connection(possible_connections)
+            return self.get_elixys_connection(possible_connections)
 
     def copy_elixys_to_machine(self, version_to_copy_path):
         self.sftp.chdir('./Desktop/elixys')
@@ -61,18 +61,19 @@ class Updater(object):
         home_dir = '/'.join(dirs[:home_dir_len]) + '/'
 
         elixys_dir = self.sftp.listdir()
-        old_latest_version = version.find_latest(elixys_dir)
-        old_version_path = "%s/pyelixys_v%s" % (self.sftp.getcwd(),str(old_latest_version))
+        self.updating_from_version = version.find_latest(elixys_dir)
+        if self.updating_from_version:
+            self.updating_from_version.path = "%s/pyelixys_v%s" % (self.sftp.getcwd(),str(self.updating_from_version))
 
         zip = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
 
         try:
-            app_name, newest_elixys_version = self.determine_elixys_version(zip)
+            app_name, self.updating_to_version = version.determine_elixys_version(zip)
             current_directory = self.sftp.getcwd()
-            newest_elixys_version_path =  "%s/%s_v%s" % (current_directory, app_name, newest_elixys_version)
-            logger.info("Installing at %s" % newest_elixys_version_path)
-            logger.info("Installing Elixys version %s" % newest_elixys_version )
-            self.sftp.mkdir(newest_elixys_version_path)
+            self.updating_to_version.path =  "%s/%s_v%s" % (current_directory, app_name, str(self.updating_to_version))
+            logger.info("Installing at %s" % self.updating_to_version.path)
+            logger.info("Installing Elixys version %s" % str(self.updating_to_version) )
+            self.sftp.mkdir(self.updating_to_version.path)
         except KeyError as e:
             logger.error("Corrupted Copy of Elixys.  Please re-download a copy")
             return False
@@ -88,12 +89,12 @@ class Updater(object):
                 overwrite_prompt.clear()
                 return False
             else:
-                logger.info("Over-writing version %s." % newest_elixys_version)
-                old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + newest_elixys_version
-                self.sftp.rename(newest_elixys_version_path, old_version_new_name)
-                self.sftp.mkdir(newest_elixys_version_path)
+                logger.info("Over-writing version %s." % str(self.updating_from_version))
+                old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + str(self.updating_to_version)
+                self.sftp.rename(self.updating_from_version.path, old_version_new_name)
+                self.sftp.mkdir(self.updating_to_version.path)
 
-        self.sftp.chdir(newest_elixys_version_path)
+        self.sftp.chdir(self.updating_to_version.path)
 
         for file_name in zip.namelist()[1:]:
             application_name = '/'.join(file_name.split('/')[1:])
@@ -105,30 +106,19 @@ class Updater(object):
                 zip_file_ext = zip.open(file_name)
                 self.sftp.putfo(zip_file_ext, application_name)
 
-        if old_latest_version:
+        if self.updating_from_version:
             logger.info("Copying the inherited files from previous version")
-            self.copy_important_legacy_data_to_new_version(old_version_path, newest_elixys_version_path)
+            self.copy_important_legacy_data_to_new_version()
         return True
 
-    def determine_elixys_version(self, zip):
-        root_dir = zip.namelist()[0]
-        try:
-            file = zip.open("%ssrc/pyelixys/hal/templates/hwconf_hardware.ini" % root_dir)
-        except KeyError as e:
-            file = zip.open("%spyelixys/hal/templates/hwconf_hardware.ini" % root_dir)
+    def copy_important_legacy_data_to_new_version(self):
+        hwconf_old_path = self.updating_from_version.get_hardware_config_path()
+        hwconf_new_path = self.updating_to_version.get_hardware_config_path()
 
-        config = ConfigObj(file)
-        app_name = config["Version"]["name"]
-        ver = config["Version"]["version"]
-        return app_name, ver
-
-    def copy_important_legacy_data_to_new_version(self, old_version_path, new_version_path):
-        hwconf_old_path = "%s/%s" % (old_version_path,"pyelixys/hal/hwconf.ini")
-        hwconf_new_path = "%s/%s" % (new_version_path,"pyelixys/hal/hwconf.ini")
         self.ssh_client.exec_command("cp %s %s" % (hwconf_old_path, hwconf_new_path))
-        
-        db_old_path = "%s/%s" % (old_version_path,"elixys.db")
-        db_new_path = "%s/%s" % (new_version_path,"elixys.db")
+
+        db_old_path = self.updating_from_version.get_db_path()
+        db_new_path = self.updating_to_version.get_db_path()
         self.ssh_client.exec_command("cp %s %s" % (db_old_path, db_new_path))
 
 def validate_elixys_is_up():
