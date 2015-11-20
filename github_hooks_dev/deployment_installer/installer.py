@@ -9,17 +9,14 @@ import updater
 logger = logging.getLogger("installer")
 logger.setLevel(logging.DEBUG)
 
-class InstallHandler(logging.Handler):
+class InstallHandler(QtCore.QObject,logging.Handler):
     def __init__(self,level=logging.NOTSET):
+        QtCore.QObject.__init__(self)
         logging.Handler.__init__(self,level)
         self.qtText = None
 
     def handle(self, record):
-        if self.qtText:
-            self.qtText.setText(record.msg)
-
-    def setLoggerText(self, qtText):
-        self.qtText = qtText
+        self.emit( QtCore.SIGNAL('log_message(QString, QString)'), record.levelname, record.msg)
 
 hdlr = InstallHandler()
 logger.addHandler(hdlr)
@@ -29,11 +26,10 @@ class ElixysInstaller(QtGui.QMainWindow):
     def __init__(self):
         super(ElixysInstaller, self).__init__()
         self.initUI()
-        hdlr.setLoggerText(self.status_label)
         self.show()
 
     def initUI(self):
-        self.setFixedSize(1000,800)
+        self.setFixedSize(1000,600)
         self.setWindowTitle('Elixys Installer')
         self.mainWidget=QtGui.QWidget(self)
         layout = QtGui.QVBoxLayout()
@@ -46,7 +42,9 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.cancel_install.setFixedSize(975,100)
         self.show_buttons(False)
 
-        self.status_label = QtGui.QLabel("", self)
+        self.status_label = QtGui.QTextEdit("", self)
+        self.status_label.setFixedSize(975, 200)
+        self.status_label.setReadOnly(True)
 
         layout.addWidget(self.dialog_button)
         layout.addWidget(self.status_label)
@@ -58,6 +56,8 @@ class ElixysInstaller(QtGui.QMainWindow):
         widget = QtGui.QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+
+        self.connect(hdlr, QtCore.SIGNAL("log_message(QString, QString)"), self.log_message)
 
     def show_buttons(self, do_show):
         self.overwrite_copy.setVisible(do_show)
@@ -80,6 +80,10 @@ class ElixysInstaller(QtGui.QMainWindow):
             self.connect( self.monitor_thread, QtCore.SIGNAL("show_buttons(bool)"), self.show_buttons )
             self.connect( self.monitor_thread, QtCore.SIGNAL("finished_updating()"), self.finished_updating )
             self.monitor_thread.start()
+
+    def log_message(self, log_level, message):
+        self.status_label.append(message)
+        self.status_label.moveCursor(QtGui.QTextCursor.End)
 
     def overwrite_install(self):
         updater.overwrite_prompt.clear()
