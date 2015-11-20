@@ -6,15 +6,18 @@ import logging
 
 import paramiko
 import time
+import os
+import json
 from threading import Event
 from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
 
-
-
 ELIXYS_HOST_IP = "192.168.100.101"
 DECRYPTION_KEY = '1234567890123456'
+
+__passcodes = os.getenv("elixys_passcodes")
+PASSCODES = json.loads(__passcodes)
 Port = 22
 
 logger = logging.getLogger("installer")
@@ -116,16 +119,14 @@ class Updater(object):
 def validate_elixys_is_up():
     elixys_connection = httplib.HTTPConnection(ELIXYS_HOST_IP, 5000, timeout=30)
     elixys_connection.connect()
+    logger.debug("Elixys is up")
     elixys_connection.close()
 
 def do_install(file_path):
     try:
         logger.info("Installing from %s" % file_path)
         validate_elixys_is_up()
-        possible_username_passwords = [("sofiebio","sofiebio"),
-                                       ("sofiebio", "ThorsHammer42!"),
-                                       ("sofie", "sofiebio"),
-                                       ("sofie", "ThorsHammer42!")]
+        possible_username_passwords = PASSCODES
         updater = Updater(ELIXYS_HOST_IP, Port)
         logger.info("Authenticating into the CBOX")
         updater.get_elixys_connection(possible_username_passwords)
@@ -137,7 +138,7 @@ def do_install(file_path):
             else:
                 logger.info("Install has been cancelled")
         except Exception as e:
-            print str(e)
+            logger.error( str(e) )
             logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
         finally:
             updater.connection.close()
@@ -159,7 +160,8 @@ def do_install(file_path):
         logger.error("Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem")
 
 if __name__ == "__main__":
-    downloaded_link_url = "/home/jcatterson/Downloads/download.zip"
+    downloaded_link_url = 'C:\\Users\\Justin\\Downloads\\download'#"/home/jcatterson/Downloads/download.zip"
     usr_zip_path = input("Type the path the Elixys zip file")
     downloaded_link_url = usr_zip_path if usr_zip_path != "" else downloaded_link_url
     do_install(downloaded_link_url)
+    time.sleep(30)
