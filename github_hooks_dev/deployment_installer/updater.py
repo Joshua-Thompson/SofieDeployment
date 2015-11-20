@@ -42,7 +42,9 @@ class Updater(object):
         self.connection.connect(None, username, password, gss_host=socket.getfqdn(self.hostname),
                   gss_auth=False, gss_kex=False)
         self.sftp = paramiko.SFTPClient.from_transport(self.connection)
+        logger.info("Authenticated SFTP")
         self.ssh_client.connect(self.hostname, self.port, username, password,gss_auth=False,gss_kex=False)
+        logger.info("Authenticated SSH")
 
     def get_elixys_connection(self, possible_connections):
         try:
@@ -115,10 +117,12 @@ class Updater(object):
         hwconf_old_path = self.updating_from_version.get_hardware_config_path()
         hwconf_new_path = self.updating_to_version.get_hardware_config_path()
 
+        logger.info("Copying %s to %s" % (hwconf_old_path,hwconf_new_path))
         self.ssh_client.exec_command("cp %s %s" % (hwconf_old_path, hwconf_new_path))
 
         db_old_path = self.updating_from_version.get_db_path()
         db_new_path = self.updating_to_version.get_db_path()
+        logger.info("Copying %s to %s" % (db_old_path, db_new_path))
         self.ssh_client.exec_command("cp %s %s" % (db_old_path, db_new_path))
 
 def validate_elixys_is_up():
