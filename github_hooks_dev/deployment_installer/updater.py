@@ -38,6 +38,7 @@ class Updater(object):
         self.sftp = None
         self.updating_to_version = None
         self.updating_from_version = None
+        self.home_dir = None
 
     def authenticate(self, username, password):
         self.connection = paramiko.Transport((self.hostname, self.port))
@@ -61,35 +62,38 @@ class Updater(object):
         except paramiko.ssh_exception.AuthenticationException:
             return self.get_elixys_connection(possible_connections)
 
+    def prompt_reinstall(self):
+        logger.warn("This version already exists.  Would you like to reinstall it?")
+        overwrite_prompt.set()
+        while overwrite_prompt.isSet() and not abort.isSet():
+            time.sleep(.5)
+
+        if abort.isSet():
+            logger.info("Cancelling the install.")
+            abort.clear()
+            overwrite_prompt.clear()
+            return False
+        abort.clear()
+        logger.info("Over-writing version %s." % str(self.updating_from_version))
+        old_version_new_name = self.home_dir + str(time.time()) + str(self.updating_to_version)
+        self.sftp.rename(self.updating_from_version.path, old_version_new_name)
+        self.updating_from_version.path = old_version_new_name
+
     def copy_elixys_to_machine(self, version_to_copy_path):
         self.sftp.chdir(ELIXYS_INSTALL_DIR)
         dirs = self.sftp.getcwd().split('/')
         home_dir_len = len(dirs) - 2
-        home_dir = '/'.join(dirs[:home_dir_len]) + '/'
+        self.home_dir = '/'.join(dirs[:home_dir_len]) + '/'
 
         elixys_dir = self.sftp.listdir()
         self.updating_from_version = version.find_latest(elixys_dir)
         if self.updating_from_version:
-            self.updating_from_version.path = "%s/pyelixys_v%s" % (self.sftp.getcwd(),str(self.updating_from_version))
+            self.updating_from_version.path = "%s/%s" % (self.sftp.getcwd(),str(self.updating_from_version))
 
         zip,zip_io = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
-        app_name, self.updating_to_version = version.determine_elixys_version(zip)
+        self.updating_to_version = version.determine_elixys_version(zip)
         if self.updating_to_version == self.updating_from_version:
-            logger.warn("This version already exists.  Would you like to reinstall it?")
-            overwrite_prompt.set()
-            while overwrite_prompt.isSet() and not abort.isSet():
-                time.sleep(.5)
-
-            if abort.isSet():
-                logger.info("Cancelling the install.")
-                abort.clear()
-                overwrite_prompt.clear()
-                return False
-            abort.clear()
-            logger.info("Over-writing version %s." % str(self.updating_from_version))
-            old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + str(self.updating_to_version)
-            self.sftp.rename(self.updating_from_version.path, old_version_new_name)
-            self.updating_from_version.path = old_version_new_name
+            self.prompt_reinstall()
 
         zip_io.seek(0,os.SEEK_END)
         file_size = zip_io.tell()
@@ -106,7 +110,8 @@ class Updater(object):
             logger.error("A bad file exists where the zip file was to be uploaded(%s).  Please remove it first" % zip_name)
             return False
 
-        input,output,errs = self.ssh_client.exec_command("unzip %s -d %s" % (zip_name,path),timeout=20)
+        logger.debug("Unzipping %s to %s" % (zip_name,path))
+        input,output,errs = self.ssh_client.exec_command("unzip %s -d %s" % (zip_name,path),timeout=60)
 
         try:
             logger.info(output.read())
@@ -117,7 +122,7 @@ class Updater(object):
             logger.error("This version was already unzipped, but was never moved to the version name.")
             return False
 
-        new_version_name = "%s_v%s" % (app_name, str(self.updating_to_version))
+        new_version_name = str(self.updating_to_version)
         self.updating_to_version.path = "%s/%s" % (self.sftp.getcwd(), new_version_name)
         try:
             self.sftp.rename(zip_root_dir,new_version_name)

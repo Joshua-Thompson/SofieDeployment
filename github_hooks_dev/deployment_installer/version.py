@@ -8,6 +8,7 @@ class Version(object):
         self.standard_release = standard_release
         self.revision = revision
         self.path = path
+        self.app_name = 'pyelixys'
 
     def __cmp__(self,other):
         if other.__class__ == self.__class__:
@@ -26,7 +27,7 @@ class Version(object):
             return 1
             
     def __repr__(self):
-        return ".".join([str(self.major_release), str(self.standard_release), str(self.revision)])
+        return self.app_name + "_v" + ".".join([str(self.major_release), str(self.standard_release), str(self.revision)])
 
     def get_hardware_config_path(self):
         if self < Version(1,3,0):
@@ -65,7 +66,7 @@ def determine_elixys_version(zip):
     config = ConfigObj(file)
     app_name = config["Version"]["name"]
     ver = search_versions(["pyelixys_v%s" % config["Version"]["version"]])[0]
-    return app_name, ver
+    return ver
 
 def find_latest(elixys_directories):
     versions = search_versions(elixys_directories)
