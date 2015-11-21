@@ -3,7 +3,7 @@ import socket
 import time
 import sys
 import logging
-
+import copy
 import paramiko
 import time
 import os
@@ -13,7 +13,7 @@ from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
 
-ELIXYS_HOST_IP = "192.168.2.10"#"192.168.100.101"
+ELIXYS_HOST_IP = "192.168.2.125"#"192.168.100.101"
 DECRYPTION_KEY = '1234567890123456'
 ELIXYS_INSTALL_DIR = './Desktop/elixys'
 
@@ -72,19 +72,9 @@ class Updater(object):
         if self.updating_from_version:
             self.updating_from_version.path = "%s/pyelixys_v%s" % (self.sftp.getcwd(),str(self.updating_from_version))
 
-        zip = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
-
-        try:
-            app_name, self.updating_to_version = version.determine_elixys_version(zip)
-            current_directory = self.sftp.getcwd()
-            self.updating_to_version.path =  "%s/%s_v%s" % (current_directory, app_name, str(self.updating_to_version))
-            logger.info("Installing at %s" % self.updating_to_version.path)
-            logger.info("Installing Elixys version %s" % str(self.updating_to_version) )
-            self.sftp.mkdir(self.updating_to_version.path)
-        except KeyError as e:
-            logger.error("Corrupted Copy of Elixys.  Please re-download a copy")
-            return False
-        except IOError:
+        zip,zip_io = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
+        app_name, self.updating_to_version = version.determine_elixys_version(zip)
+        if self.updating_to_version == self.updating_from_version:
             logger.warn("This version already exists.  Would you like to reinstall it?")
             overwrite_prompt.set()
             while overwrite_prompt.isSet() and not abort.isSet():
@@ -95,41 +85,68 @@ class Updater(object):
                 abort.clear()
                 overwrite_prompt.clear()
                 return False
-            else:
-                logger.info("Over-writing version %s." % str(self.updating_from_version))
-                old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + str(self.updating_to_version)
-                self.sftp.rename(self.updating_from_version.path, old_version_new_name)
-                self.updating_from_version.path = old_version_new_name
-                self.sftp.mkdir(self.updating_to_version.path)
+            abort.clear()
+            logger.info("Over-writing version %s." % str(self.updating_from_version))
+            old_version_new_name = home_dir + str(time.time()) + app_name + "_v" + str(self.updating_to_version)
+            self.sftp.rename(self.updating_from_version.path, old_version_new_name)
+            self.updating_from_version.path = old_version_new_name
 
-        self.sftp.chdir(self.updating_to_version.path)
+        zip_io.seek(0,os.SEEK_END)
+        file_size = zip_io.tell()
+        zip_io.seek(0)
+        path = self.sftp.getcwd()
 
-        for file_name in zip.namelist()[1:]:
-            application_name = '/'.join(file_name.split('/')[1:])
-            if application_name.endswith("/"):
-                logger.info("Creating folder %s" % application_name)
-                self.sftp.mkdir(application_name)
-            else:
-                logger.info("Creating file %s" % application_name)
-                zip_file_ext = zip.open(file_name)
-                self.sftp.putfo(zip_file_ext, application_name)
+        zip_root_dir = zip.namelist()[0]
+        zip_name = path + "/" + zip_root_dir[:len(zip_root_dir)-1] + ".zip"
+
+        ### If a file already exists with this name that is not a zip we will get an issue
+        try:
+            self.sftp.putfo(zip_io,zip_name,file_size=file_size,callback=self.monitor_status,confirm=True)
+        except:
+            logger.error("A bad file exists where the zip file was to be uploaded(%s).  Please remove it first" % zip_name)
+            return False
+
+        input,output,errs = self.ssh_client.exec_command("unzip %s -d %s" % (zip_name,path),timeout=20)
+
+        try:
+            logger.info(output.read())
+            logger.error(errs.read())
+        except Exception as e:
+            ###The only unhandled case
+            logger.error(str(e))
+            logger.error("This version was already unzipped, but was never moved to the version name.")
+            return False
+
+        new_version_name = "%s_v%s" % (app_name, str(self.updating_to_version))
+        self.updating_to_version.path = "%s/%s" % (self.sftp.getcwd(), new_version_name)
+        try:
+            self.sftp.rename(zip_root_dir,new_version_name)
+        except:
+            logger.error("This version of Elixys already exists.  If you would like to re-install this version; please remove it and try again")
 
         if self.updating_from_version:
             logger.info("Copying the inherited files from previous version")
             self.copy_important_legacy_data_to_new_version()
         return True
 
+    def monitor_status(self,bits_sent,total_bits):
+        logger.info("Uploaded %d/%d" % (bits_sent,total_bits))
+
     def copy_important_legacy_data_to_new_version(self):
         hwconf_old_path = self.updating_from_version.get_hardware_config_path()
         hwconf_new_path = self.updating_to_version.get_hardware_config_path()
 
         logger.info("Copying %s to %s" % (hwconf_old_path,hwconf_new_path))
-        self.ssh_client.exec_command("cp %s %s" % (hwconf_old_path, hwconf_new_path))
+        input,output,errs = self.ssh_client.exec_command("cp %s %s" % (hwconf_old_path, hwconf_new_path),timeout=20)
+        logger.info(output.read())
+        logger.info(errs.read())
 
         db_old_path = self.updating_from_version.get_db_path()
         db_new_path = self.updating_to_version.get_db_path()
         logger.info("Copying %s to %s" % (db_old_path, db_new_path))
-        self.ssh_client.exec_command("cp %s %s" % (db_old_path, db_new_path))
+        input,output,errs = self.ssh_client.exec_command("cp %s %s" % (db_old_path, db_new_path),timeout=20)
+        logger.info(output.read())
+        logger.info(errs.read())
 
 def validate_elixys_is_up():
     elixys_connection = httplib.HTTPConnection(ELIXYS_HOST_IP, 5000, timeout=30)
@@ -141,7 +158,7 @@ def do_install(file_path):
     try:
         logger.info("Installing from %s" % file_path)
         validate_elixys_is_up()
-        possible_username_passwords = PASSCODES
+        possible_username_passwords = copy.deepcopy(PASSCODES)
         updater = Updater(ELIXYS_HOST_IP, Port)
         logger.info("Authenticating into the CBOX")
         updater.get_elixys_connection(possible_username_passwords)

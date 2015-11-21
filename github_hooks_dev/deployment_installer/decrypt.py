@@ -6,7 +6,7 @@ import StringIO
 def decrypt_zip(decryption_key, encrypted_zip_path):
     string_io = decrypt_file(decryption_key, encrypted_zip_path)
     zip = ZipFile(string_io, mode='r')
-    return zip
+    return (zip,string_io)
 
 def decrypt_file(key, in_filename, chunksize=24*1024):
     """ Decrypts a file using AES (CBC mode) with the
