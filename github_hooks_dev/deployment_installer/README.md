@@ -3,20 +3,20 @@ It can also be used to indicate weather or not elixys is up and running.
 
 To execute this program, you must have QT installed on your system.  Our target OS is Windows, specifically the Microsoft Surface (Windows 10.0 64-bit OS).
 
-To install on Windows, download Python [https://www.python.org/downloads/release/python-279/].  Keep track of what processor you choose 32-bit works on a 64-bit OS, but you will need to install the same processor bit size for your QT install.
+To install on Windows, download [Python](https://www.python.org/downloads/release/python-279/).  Keep track of what processor you choose 32-bit works on a 64-bit OS, but you will need to install the same processor bit size for your QT install.
 Append to your environment path the directory to the python exe.  It should also contain pip.
 
-You will also need Microsoft Visual C++ Compiler for Python [https://www.microsoft.com/en-us/download/details.aspx?id=44266]
+You will also need [Microsoft Visual C++ Compiler for Python](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
 
-PyQt 4 will also need to be installed [https://www.riverbankcomputing.com/software/pyqt/download].  Add the path of QT designer and other exe's to your systems path.
+[PyQt 4](https://www.riverbankcomputing.com/software/pyqt/download) will also need to be installed.  Add the path of QT designer and other exe's to your systems path.
 
 Then,
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 You are now ready to execute the program
-python installer.py
+`python installer.py`
 
 If the application opens the UI, you have installed everything correct.
 
 To make this application executable for other PC's; execute
-windows_exe_builder.bat
+`windows_exe_builder.bat`
