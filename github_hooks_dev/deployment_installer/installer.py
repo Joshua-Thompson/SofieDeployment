@@ -43,18 +43,25 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
         self.app_is_up.hide()
         self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
-        #self.box_is_up.hide()
+        self.box_is_up.hide()
         self.show_buttons(False)
         self.monitor_is_up = MonitorAppIsUp()
         self.monitor_is_up.start()
-        self.connect(self.monitor_is_up, QtCore.SIGNAL("elixys_is_up(bool)"), self.elixys_is_up)
+        self.updater = updater.get_updater()
+        self.connect(self.monitor_is_up, QtCore.SIGNAL("pyelixys_is_up(bool)"), self.pyelixys_is_up)
+        self.authenticator = Authenticator(self.updater)
+        self.connect(self.authenticator, QtCore.SIGNAL("box_is_up(bool)"), self.elixys_box_is_up)
+        self.authenticator.start()
 
     def show_buttons(self, do_show):
         self.overwrite_copy.setVisible(do_show)
         self.cancel_install.setVisible(do_show)
 
-    def elixys_is_up(self, is_up):
+    def pyelixys_is_up(self, is_up):
         self.app_is_up.setVisible(is_up)
+
+    def elixys_box_is_up(self, is_up):
+        self.box_is_up.setVisible(is_up)
 
     def finished_updating(self):
         self.dialog_btn.show()
@@ -65,7 +72,7 @@ class ElixysInstaller(QtGui.QMainWindow):
                 '.')
 
         if file_name:
-            t_update = threading.Thread(target=updater.do_install, args=(file_name,))
+            t_update = threading.Thread(target=self.updater.do_install, args=(file_name,))
             t_update.start()
             self.dialog_btn.hide()
 
@@ -83,7 +90,20 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def abort_update(self):
         updater.abort.set()
-        
+
+class Authenticator(QtCore.QThread):
+    def __init__(self, updater):
+        QtCore.QThread.__init__(self)
+        self.updater = updater
+
+    def run(self):
+        try:
+            updater.do_authentication(self.updater)
+            self.emit(QtCore.SIGNAL('box_is_up(bool)'), True)
+        except:
+            logger.error("Failed to Authenticate")
+            self.emit(QtCore.SIGNAL('box_is_up(bool)'), False)
+
 class MonitorAppIsUp(QtCore.QThread):
     def __init__(self):
         QtCore.QThread.__init__(self)
@@ -92,9 +112,9 @@ class MonitorAppIsUp(QtCore.QThread):
         while True:
             try:
                 updater.validate_elixys_is_up()
-                self.emit(QtCore.SIGNAL('elixys_is_up(bool)'), True)
+                self.emit(QtCore.SIGNAL('pyelixys_is_up(bool)'), True)
             except:
-                self.emit(QtCore.SIGNAL('elixys_is_up(bool)'), False)
+                self.emit(QtCore.SIGNAL('pyelixys_is_up(bool)'), False)
             time.sleep(3)
 
 class MonitorInstall(QtCore.QThread):

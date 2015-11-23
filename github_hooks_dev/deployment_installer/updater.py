@@ -80,6 +80,8 @@ class Updater(object):
         self.updating_from_version.path = old_version_new_name
 
     def copy_elixys_to_machine(self, version_to_copy_path):
+        if self.home_dir:
+            self.sftp.chdir(self.home_dir)
         self.sftp.chdir(ELIXYS_INSTALL_DIR)
         dirs = self.sftp.getcwd().split('/')
         home_dir_len = len(dirs) - 2
@@ -140,6 +142,17 @@ class Updater(object):
     def monitor_status(self,bits_sent,total_bits):
         logger.info("Uploaded %d/%d" % (bits_sent,total_bits))
 
+    def do_install(self,file_path):
+        try:
+            updated = self.copy_elixys_to_machine(file_path)
+            if updated:
+                logger.info("You may restart your Elixys machine now")
+            else:
+                logger.info("Install has been cancelled")
+        except Exception as e:
+            logger.error("Error: " + str(e))
+            logger.error("Failed to update Elixys.\nPlease contact SofieBio Sciences to resolve the problem.")
+
     def copy_important_legacy_data_to_new_version(self):
         hwconf_old_path = self.updating_from_version.get_hardware_config_path()
         hwconf_new_path = self.updating_to_version.get_hardware_config_path()
@@ -161,6 +174,14 @@ def validate_elixys_is_up():
     elixys_connection.connect()
     #logger.debug("Elixys is up")
     elixys_connection.close()
+
+def do_authentication(updater):
+    possible_username_passwords = copy.deepcopy(PASSCODES)
+    possible_username_passwords = decrypt_passcodes(possible_username_passwords)
+    updater.get_elixys_connection(possible_username_passwords)
+
+def get_updater():
+    return Updater(ELIXYS_HOST_IP, Port)
 
 def do_install(file_path):
     try:
