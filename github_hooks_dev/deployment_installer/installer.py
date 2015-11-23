@@ -3,6 +3,7 @@ import sys
 import logging
 import threading
 import time
+import os
 from PyQt4 import QtGui, QtCore,uic
 import updater
 
@@ -29,7 +30,8 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.show()
 
     def initUI(self):
-        uic.loadUi('elixys_uploader.ui', self)
+        ui_path = os.path.join('ui', 'elixys_uploader.ui')
+        uic.loadUi(ui_path, self)
         self.connect(hdlr, QtCore.SIGNAL("log_message(QString, QString)"), self.log_message)
         self.dialog_btn = self.findChild(QtGui.QPushButton,"upload_btn")
         self.dialog_btn.clicked.connect(self.install_elixys_version)
@@ -38,11 +40,21 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.overwrite_copy = self.findChild(QtGui.QPushButton,"yes_btn")
         self.overwrite_copy.clicked.connect(self.overwrite_install)
         self.status_label = self.findChild(QtGui.QTextEdit, "status_txt")
+        self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
+        self.app_is_up.hide()
+        self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
+        #self.box_is_up.hide()
         self.show_buttons(False)
+        self.monitor_is_up = MonitorAppIsUp()
+        self.monitor_is_up.start()
+        self.connect(self.monitor_is_up, QtCore.SIGNAL("elixys_is_up(bool)"), self.elixys_is_up)
 
     def show_buttons(self, do_show):
         self.overwrite_copy.setVisible(do_show)
         self.cancel_install.setVisible(do_show)
+
+    def elixys_is_up(self, is_up):
+        self.app_is_up.setVisible(is_up)
 
     def finished_updating(self):
         self.dialog_btn.show()
@@ -71,6 +83,19 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def abort_update(self):
         updater.abort.set()
+        
+class MonitorAppIsUp(QtCore.QThread):
+    def __init__(self):
+        QtCore.QThread.__init__(self)
+
+    def run(self):
+        while True:
+            try:
+                updater.validate_elixys_is_up()
+                self.emit(QtCore.SIGNAL('elixys_is_up(bool)'), True)
+            except:
+                self.emit(QtCore.SIGNAL('elixys_is_up(bool)'), False)
+            time.sleep(3)
 
 class MonitorInstall(QtCore.QThread):
     def __init__(self,update_thread):

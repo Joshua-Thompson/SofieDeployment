@@ -159,7 +159,7 @@ class Updater(object):
 def validate_elixys_is_up():
     elixys_connection = httplib.HTTPConnection(ELIXYS_HOST_IP, 5000, timeout=30)
     elixys_connection.connect()
-    logger.debug("Elixys is up")
+    #logger.debug("Elixys is up")
     elixys_connection.close()
 
 def do_install(file_path):
