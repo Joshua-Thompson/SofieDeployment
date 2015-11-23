@@ -3,6 +3,7 @@ It can also be used to indicate weather or not elixys is up and running.
 
 To execute this program, you must have QT installed on your system.  Our target OS is Windows, specifically the Microsoft Surface (Windows 10.0 64-bit OS).
 
+## Windows Installation
 To install on Windows, download [Python](https://www.python.org/downloads/release/python-279/).  Keep track of what processor you choose 32-bit works on a 64-bit OS, but you will need to install the same processor bit size for your QT install.
 Append to your environment path the directory to the python exe.  It should also contain pip.
 
@@ -20,3 +21,4 @@ If the application opens the UI, you have installed everything correct.
 
 To make this application executable for other PC's; execute
 `windows_exe_builder.bat`
+
