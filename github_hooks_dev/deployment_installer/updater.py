@@ -1,6 +1,5 @@
 import httplib
 import socket
-import time
 import sys
 import logging
 import copy
@@ -8,18 +7,19 @@ import paramiko
 import time
 import os
 import json
+from configobj import ConfigObj
 from threading import Event
 from paramiko.py3compat import input
-from decrypt import decrypt_zip
+from decrypt import decrypt_zip,encrypt_passcodes,decrypt_passcodes
 import version
 
-ELIXYS_HOST_IP = "192.168.2.7"#"192.168.100.101"
-DECRYPTION_KEY = '1234567890123456'
-ELIXYS_INSTALL_DIR = './Desktop/elixys'
+settings = ConfigObj(os.path.join("dependencies","settings.ini"))
+ELIXYS_HOST_IP = settings['ip']
+DECRYPTION_KEY = settings['decryption_key']
+ELIXYS_INSTALL_DIR = settings['install_dir']
 
-__passcodes = os.getenv("elixys_passcodes")
-PASSCODES = json.loads(__passcodes)
-Port = 22
+PASSCODES = json.loads(settings['passcodes'])
+Port = int(settings['port'])
 
 logger = logging.getLogger("installer")
 logger.setLevel(logging.DEBUG)
@@ -167,6 +167,7 @@ def do_install(file_path):
         logger.info("Installing from %s" % file_path)
         validate_elixys_is_up()
         possible_username_passwords = copy.deepcopy(PASSCODES)
+        possible_username_passwords = decrypt_passcodes(possible_username_passwords)
         updater = Updater(ELIXYS_HOST_IP, Port)
         logger.info("Authenticating into the CBOX")
         updater.get_elixys_connection(possible_username_passwords)
@@ -201,8 +202,13 @@ def do_install(file_path):
         logger.error("Error: " + str(e))
         logger.error("Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem")
 
+def set_passcodes(passcodes):
+    codes = encrypt_passcodes(passcodes)
+    settings["passcodes"] = json.dumps(codes)
+    settings.write()
+
 if __name__ == "__main__":
-    downloaded_link_url = 'C:\\Users\\Justin\\Downloads\\download'#"/home/jcatterson/Downloads/download.zip"
+    downloaded_link_url = 'C:\\Users\\Justin\\Downloads\\download'
     usr_zip_path = input("Type the path the Elixys zip file")
     downloaded_link_url = usr_zip_path if usr_zip_path != "" else downloaded_link_url
     do_install(downloaded_link_url)

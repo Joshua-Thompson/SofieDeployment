@@ -30,7 +30,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.show()
 
     def initUI(self):
-        ui_path = os.path.join('ui', 'elixys_uploader.ui')
+        ui_path = os.path.join('dependencies','ui', 'elixys_uploader.ui')
         uic.loadUi(ui_path, self)
         self.connect(hdlr, QtCore.SIGNAL("log_message(QString, QString)"), self.log_message)
         self.dialog_btn = self.findChild(QtGui.QPushButton,"upload_btn")
