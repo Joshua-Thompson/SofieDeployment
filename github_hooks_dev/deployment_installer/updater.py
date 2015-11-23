@@ -13,7 +13,7 @@ from paramiko.py3compat import input
 from decrypt import decrypt_zip
 import version
 
-ELIXYS_HOST_IP = "192.168.2.125"#"192.168.100.101"
+ELIXYS_HOST_IP = "192.168.2.7"#"192.168.100.101"
 DECRYPTION_KEY = '1234567890123456'
 ELIXYS_INSTALL_DIR = './Desktop/elixys'
 
@@ -72,7 +72,7 @@ class Updater(object):
             logger.info("Cancelling the install.")
             abort.clear()
             overwrite_prompt.clear()
-            return False
+            raise Exception("Cancelling install")
         abort.clear()
         logger.info("Over-writing version %s." % str(self.updating_from_version))
         old_version_new_name = self.home_dir + str(time.time()) + str(self.updating_to_version)
@@ -93,7 +93,10 @@ class Updater(object):
         zip,zip_io = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
         self.updating_to_version = version.determine_elixys_version(zip)
         if self.updating_to_version == self.updating_from_version:
-            self.prompt_reinstall()
+            try:
+                self.prompt_reinstall()
+            except:
+                return False
 
         zip_io.seek(0,os.SEEK_END)
         file_size = zip_io.tell()

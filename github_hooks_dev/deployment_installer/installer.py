@@ -3,7 +3,7 @@ import sys
 import logging
 import threading
 import time
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore,uic
 import updater
 
 logger = logging.getLogger("installer")
@@ -29,42 +29,23 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.show()
 
     def initUI(self):
-        self.setFixedSize(1000,600)
-        self.setWindowTitle('Elixys Installer')
-        self.mainWidget=QtGui.QWidget(self)
-        layout = QtGui.QVBoxLayout()
-
-        self.dialog_button = QtGui.QPushButton('Select Elixys Install',self)
-        self.dialog_button.setFixedSize(975,100)
-        self.overwrite_copy = QtGui.QPushButton('Yes',self)
-        self.overwrite_copy.setFixedSize(975,100)
-        self.cancel_install = QtGui.QPushButton('No',self)
-        self.cancel_install.setFixedSize(975,100)
-        self.show_buttons(False)
-
-        self.status_label = QtGui.QTextEdit("", self)
-        self.status_label.setFixedSize(975, 200)
-        self.status_label.setReadOnly(True)
-
-        layout.addWidget(self.dialog_button)
-        layout.addWidget(self.status_label)
-        layout.addWidget(self.overwrite_copy)
-        layout.addWidget(self.cancel_install)
-        self.dialog_button.clicked.connect(self.install_elixys_version)
-        self.overwrite_copy.clicked.connect(self.overwrite_install)
-        self.cancel_install.clicked.connect(self.abort_update)
-        widget = QtGui.QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
-
+        uic.loadUi('elixys_uploader.ui', self)
         self.connect(hdlr, QtCore.SIGNAL("log_message(QString, QString)"), self.log_message)
+        self.dialog_btn = self.findChild(QtGui.QPushButton,"upload_btn")
+        self.dialog_btn.clicked.connect(self.install_elixys_version)
+        self.cancel_install = self.findChild(QtGui.QPushButton,"no_btn")
+        self.cancel_install.clicked.connect(self.abort_update)
+        self.overwrite_copy = self.findChild(QtGui.QPushButton,"yes_btn")
+        self.overwrite_copy.clicked.connect(self.overwrite_install)
+        self.status_label = self.findChild(QtGui.QTextEdit, "status_txt")
+        self.show_buttons(False)
 
     def show_buttons(self, do_show):
         self.overwrite_copy.setVisible(do_show)
         self.cancel_install.setVisible(do_show)
 
     def finished_updating(self):
-        self.dialog_button.show()
+        self.dialog_btn.show()
         self.show_buttons(False)
         
     def install_elixys_version(self):
@@ -74,7 +55,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         if file_name:
             t_update = threading.Thread(target=updater.do_install, args=(file_name,))
             t_update.start()
-            self.dialog_button.hide()
+            self.dialog_btn.hide()
 
             self.monitor_thread = MonitorInstall(t_update)
             self.connect( self.monitor_thread, QtCore.SIGNAL("show_buttons(bool)"), self.show_buttons )
