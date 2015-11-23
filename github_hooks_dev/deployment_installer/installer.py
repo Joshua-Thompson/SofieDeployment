@@ -97,6 +97,7 @@ class Authenticator(QtCore.QThread):
         self.updater = updater
 
     def run(self):
+        logger.info("Authenticating...")
         try:
             updater.do_authentication(self.updater)
             self.emit(QtCore.SIGNAL('box_is_up(bool)'), True)
