@@ -223,8 +223,10 @@ def do_install(file_path):
         logger.error("Error: " + str(e))
         logger.error("Failed to authenticate Elixys.\nPlease contact SofieBio Sciences to resolve the problem")
 
-def set_passcodes(passcodes):
+def set_passcodes(ip, port, passcodes):
     codes = encrypt_passcodes(passcodes)
+    settings['ip'] = ip
+    settings['port'] = port
     settings["passcodes"] = json.dumps(codes)
     settings.write()
 

@@ -29,8 +29,11 @@ def decrypt_file(key, in_filename, chunksize=24*1024):
             zip_io.write(decryptor.decrypt(chunk))
         return zip_io
 
-obj = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
+def __get_encryption_key():
+    return AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
+
 def decrypt_passcodes(passcodes):
+    obj = __get_encryption_key()
     decrypted = []
     for code in passcodes:
         username = base64.decodestring(code[0])
@@ -41,6 +44,7 @@ def decrypt_passcodes(passcodes):
     return decrypted
 
 def encrypt_passcodes(passcodes):
+    obj = __get_encryption_key()
     encrypted = []
     for code in passcodes:
         username = code[0]
@@ -49,4 +53,3 @@ def encrypt_passcodes(passcodes):
         password = base64.encodestring(obj.encrypt(password + ' '*(16 - len(password) % 16)))
         encrypted.append((username,password))
     return encrypted
-

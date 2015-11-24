@@ -21,21 +21,51 @@ class InstallHandler(QtCore.QObject,logging.Handler):
 
 hdlr = InstallHandler()
 logger.addHandler(hdlr)
-
+from configobj import ConfigObj
 class ElixysSettings(QtGui.QDialog):
     def __init__(self,parent=None):
-        QtGui.QDialog.__init__(self,parent)
+        super(ElixysSettings,self).__init__(parent)
         self.ui = self.initUI()
+        self.settings = ConfigObj(os.path.join("dependencies","settings.ini"))
+        self.load_settings()
         
     def initUI(self):
         ui_path = os.path.join('dependencies','ui', 'elixys_settings.ui')
         self.ui = uic.loadUi(ui_path,self)
+        self.save_btn = self.findChild(QtGui.QPushButton, 'save_btn')
+        self.cancel_btn = self.findChild(QtGui.QPushButton, 'cancel_btn')
+        self.username = self.findChild(QtGui.QLineEdit,'username_txt')
+        self.password = self.findChild(QtGui.QLineEdit,'password_txt')
+        self.ip = self.findChild(QtGui.QLineEdit,'ip_txt')
+        self.port = self.findChild(QtGui.QLineEdit,'port_txt')
+        self.save_btn.clicked.connect(self.save)
+        self.cancel_btn.clicked.connect(self.close)
+
+    def close(self):
+        self.load_settings()
+        super(ElixysSettings,self).close()
+
+    def load_settings(self):
+        ip = self.settings['ip']
+        port = self.settings['port']
+        self.ip.setText(ip)
+        self.port.setText(port)
+
+    def save(self):
+        ip = self.ip.text()
+        port = self.port.text()
+        username = str(self.username.text())
+        password = str(self.password.text())
+        updater.set_passcodes(ip, port,[(username,password)])
+        logger.info("Settings Saved"	)
+        QtGui.QDialog.close(self)
 
 class ElixysInstaller(QtGui.QMainWindow):
     
     def __init__(self):
         super(ElixysInstaller, self).__init__()
         self.initUI()
+        self.move(400,100)
         self.show()
 
     def initUI(self):
