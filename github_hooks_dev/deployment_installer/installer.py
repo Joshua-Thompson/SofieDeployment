@@ -22,6 +22,15 @@ class InstallHandler(QtCore.QObject,logging.Handler):
 hdlr = InstallHandler()
 logger.addHandler(hdlr)
 
+class ElixysSettings(QtGui.QDialog):
+    def __init__(self,parent=None):
+        QtGui.QDialog.__init__(self,parent)
+        self.ui = self.initUI()
+        
+    def initUI(self):
+        ui_path = os.path.join('dependencies','ui', 'elixys_settings.ui')
+        self.ui = uic.loadUi(ui_path,self)
+
 class ElixysInstaller(QtGui.QMainWindow):
     
     def __init__(self):
@@ -52,6 +61,13 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.authenticator = Authenticator(self.updater)
         self.connect(self.authenticator, QtCore.SIGNAL("box_is_up(bool)"), self.elixys_box_is_up)
         self.authenticator.start()
+        self.settings = ElixysSettings()
+        self.settings.setModal(True)
+        self.action_connection = self.findChild(QtGui.QAction, "actionConnections")
+        self.action_connection.triggered.connect(self.open_settings)
+        
+    def open_settings(self):
+        self.settings.show()
 
     def show_buttons(self, do_show):
         self.overwrite_copy.setVisible(do_show)
