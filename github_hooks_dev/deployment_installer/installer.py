@@ -73,6 +73,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         uic.loadUi(ui_path, self)
         self.connect(hdlr, QtCore.SIGNAL("log_message(QString, QString)"), self.log_message)
         self.dialog_btn = self.findChild(QtGui.QPushButton,"upload_btn")
+        self.dialog_btn.hide()
         self.dialog_btn.clicked.connect(self.install_elixys_version)
         self.cancel_install = self.findChild(QtGui.QPushButton,"no_btn")
         self.cancel_install.clicked.connect(self.abort_update)
@@ -107,6 +108,7 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def elixys_box_is_up(self, is_up):
         self.box_is_up.setChecked(is_up)
+        self.dialog_btn.setVisible(is_up)
 
     def finished_updating(self):
         self.dialog_btn.show()
