@@ -80,7 +80,6 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.overwrite_copy.clicked.connect(self.overwrite_install)
         self.status_label = self.findChild(QtGui.QTextEdit, "status_txt")
         self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
-        self.app_is_up.hide()
         self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
 
         self.show_buttons(False)
@@ -104,7 +103,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.cancel_install.setVisible(do_show)
 
     def pyelixys_is_up(self, is_up):
-        self.app_is_up.setVisible(is_up)
+        self.app_is_up.setChecked(is_up)
 
     def elixys_box_is_up(self, is_up):
         self.box_is_up.setChecked(is_up)
