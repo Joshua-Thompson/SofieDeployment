@@ -41,6 +41,9 @@
     </property>
    </widget>
    <widget class="QToolButton" name="app_is_up">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>540</x>
@@ -71,6 +74,9 @@
     </property>
    </widget>
    <widget class="QToolButton" name="box_is_up">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>580</x>

@@ -13,13 +13,24 @@ from paramiko.py3compat import input
 from decrypt import decrypt_zip,encrypt_passcodes,decrypt_passcodes
 import version
 
-settings = ConfigObj(os.path.join("dependencies","settings.ini"))
-ELIXYS_HOST_IP = settings['ip']
-DECRYPTION_KEY = settings['decryption_key']
-ELIXYS_INSTALL_DIR = settings['install_dir']
+ELIXYS_HOST_IP = None
+DECRYPTION_KEY = None
+ELIXYS_INSTALL_DIR = None
 
-PASSCODES = json.loads(settings['passcodes'])
-Port = int(settings['port'])
+PASSCODES = None
+Port = None
+
+def load_config():
+    settings = ConfigObj(os.path.join("dependencies","settings.ini"))
+    global ELIXYS_HOST_IP, DECRYPTION_KEY,ELIXYS_INSTALL_DIR,PASSCODES,Port
+    ELIXYS_HOST_IP = settings['ip']
+    DECRYPTION_KEY = settings['decryption_key']
+    ELIXYS_INSTALL_DIR = settings['install_dir']
+
+    PASSCODES = json.loads(settings['passcodes'])
+    Port = int(settings['port'])
+
+load_config()
 
 logger = logging.getLogger("installer")
 logger.setLevel(logging.DEBUG)
