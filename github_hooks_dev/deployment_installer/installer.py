@@ -82,7 +82,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
         self.app_is_up.hide()
         self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
-        self.box_is_up.hide()
+
         self.show_buttons(False)
         self.monitor_is_up = MonitorAppIsUp()
         self.monitor_is_up.start()
@@ -107,7 +107,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.app_is_up.setVisible(is_up)
 
     def elixys_box_is_up(self, is_up):
-        self.box_is_up.setVisible(is_up)
+        self.box_is_up.setChecked(is_up)
 
     def finished_updating(self):
         self.dialog_btn.show()

@@ -77,13 +77,21 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>noun_176244_cc.png</normaloff>noun_176244_cc.png</iconset>
+      <normaloff>ssh_disconnected.png</normaloff>
+      <normalon>ssh_connected.png</normalon>
+      <disabledoff>ssh_disconnected.png</disabledoff>ssh_disconnected.png</iconset>
     </property>
     <property name="iconSize">
      <size>
       <width>40</width>
       <height>40</height>
      </size>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="no_btn">
@@ -119,7 +127,7 @@
      <x>0</x>
      <y>0</y>
      <width>636</width>
-     <height>31</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -136,7 +144,6 @@
    </widget>
    <addaction name="menuSettings"/>
   </widget>
-  <!--<widget class="QStatusBar" name="statusbar"/>-->
   <action name="actionConnections">
    <property name="text">
     <string>Connections</string>
