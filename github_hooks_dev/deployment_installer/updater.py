@@ -19,10 +19,12 @@ ELIXYS_INSTALL_DIR = None
 
 PASSCODES = None
 Port = None
+settings = None
 
 def load_config():
+    global ELIXYS_HOST_IP, DECRYPTION_KEY,ELIXYS_INSTALL_DIR,PASSCODES,Port,settings
     settings = ConfigObj(os.path.join("dependencies","settings.ini"))
-    global ELIXYS_HOST_IP, DECRYPTION_KEY,ELIXYS_INSTALL_DIR,PASSCODES,Port
+
     ELIXYS_HOST_IP = settings['ip']
     DECRYPTION_KEY = settings['decryption_key']
     ELIXYS_INSTALL_DIR = settings['install_dir']
@@ -62,6 +64,11 @@ class Updater(object):
         logger.info("Authenticated SFTP")
         self.ssh_client.connect(self.hostname, self.port, username, password,gss_auth=False,gss_kex=False)
         logger.info("Authenticated SSH")
+
+    def close_connections(self):
+        self.connection.close()
+        self.ssh_client.close()
+        logger.info("Disconnected")
 
     def get_elixys_connection(self, possible_connections):
         try:
@@ -183,7 +190,6 @@ class Updater(object):
 def validate_elixys_is_up():
     elixys_connection = httplib.HTTPConnection(ELIXYS_HOST_IP, 5000, timeout=30)
     elixys_connection.connect()
-    #logger.debug("Elixys is up")
     elixys_connection.close()
 
 def do_authentication(updater):

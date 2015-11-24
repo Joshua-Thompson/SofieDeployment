@@ -57,7 +57,8 @@ class ElixysSettings(QtGui.QDialog):
         username = str(self.username.text())
         password = str(self.password.text())
         updater.set_passcodes(ip, port,[(username,password)])
-        logger.info("Settings Saved"	)
+        logger.info("Settings Saved")
+        updater.load_config()
         QtGui.QDialog.close(self)
 
 class ElixysInstaller(QtGui.QMainWindow):
@@ -82,22 +83,41 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.status_label = self.findChild(QtGui.QTextEdit, "status_txt")
         self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
         self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
-
+        self.app_is_up.hitButton = self.restart_server
+        self.box_is_up.hitButton = self.reconnect
         self.show_buttons(False)
         self.monitor_is_up = MonitorAppIsUp()
         self.monitor_is_up.start()
         self.updater = updater.get_updater()
         self.connect(self.monitor_is_up, QtCore.SIGNAL("pyelixys_is_up(bool)"), self.pyelixys_is_up)
-        self.authenticator = Authenticator(self.updater)
-        self.connect(self.authenticator, QtCore.SIGNAL("box_is_up(bool)"), self.elixys_box_is_up)
-        self.authenticator.start()
         self.settings = ElixysSettings()
         self.settings.setModal(True)
+        self.authenticate()
         self.action_connection = self.findChild(QtGui.QAction, "actionConnections")
         self.action_connection.triggered.connect(self.open_settings)
         
     def open_settings(self):
         self.settings.show()
+
+    def restart_server(self, pos):
+        self.app_is_up.hide()
+        logger.info("Restarting")
+        if self.app_is_up.isChecked():
+            logger.info("Restarting need to write")
+
+    def reconnect(self, pos):
+        if self.box_is_up.isChecked():
+            self.updater.close_connections()
+            self.box_is_up.setChecked(False)
+        elif self.authenticator.isFinished():
+            self.box_is_up.hide()
+            self.authenticate()
+        return 0
+
+    def authenticate(self):
+        self.authenticator = Authenticator(self.updater)
+        self.connect(self.authenticator, QtCore.SIGNAL("box_is_up(bool)"), self.elixys_box_is_up)
+        self.authenticator.start()
 
     def show_buttons(self, do_show):
         self.overwrite_copy.setVisible(do_show)
@@ -105,10 +125,12 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def pyelixys_is_up(self, is_up):
         self.app_is_up.setChecked(is_up)
+        self.app_is_up.show()
 
     def elixys_box_is_up(self, is_up):
         self.box_is_up.setChecked(is_up)
         self.dialog_btn.setVisible(is_up)
+        self.box_is_up.show()
 
     def finished_updating(self):
         self.dialog_btn.show()
@@ -145,6 +167,7 @@ class Authenticator(QtCore.QThread):
 
     def run(self):
         logger.info("Authenticating...")
+        updater.load_config()
         try:
             updater.do_authentication(self.updater)
             self.emit(QtCore.SIGNAL('box_is_up(bool)'), True)
