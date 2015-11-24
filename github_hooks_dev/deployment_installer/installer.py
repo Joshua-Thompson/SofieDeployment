@@ -65,6 +65,7 @@ class ElixysInstaller(QtGui.QMainWindow):
     
     def __init__(self):
         super(ElixysInstaller, self).__init__()
+        self.copier_thread = None
         self.initUI()
         self.move(400,100)
         self.show()
@@ -83,6 +84,9 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.status_label = self.findChild(QtGui.QTextEdit, "status_txt")
         self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
         self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
+        self.backup_btn = self.findChild(QtGui.QPushButton, "backup_btn")
+        self.backup_btn.hide()
+        self.backup_btn.clicked.connect(self.make_backup)
         self.app_is_up.hitButton = self.restart_server
         self.box_is_up.hitButton = self.reconnect
         self.show_buttons(False)
@@ -108,11 +112,20 @@ class ElixysInstaller(QtGui.QMainWindow):
     def reconnect(self, pos):
         if self.box_is_up.isChecked():
             self.updater.close_connections()
-            self.box_is_up.setChecked(False)
+            self.elixys_box_is_up(False)
         elif self.authenticator.isFinished():
             self.box_is_up.hide()
             self.authenticate()
         return 0
+
+    def make_backup(self):
+        logger.info("Backing up")
+        self.backup_btn.setDisabled(True)
+        def unblock_btn():
+            self.backup_btn.setDisabled(False)
+        self.copier_thread = CopierThread(self.updater)
+        self.connect(self.copier_thread, QtCore.SIGNAL("backup_complete()"), unblock_btn)
+        self.copier_thread.start()
 
     def authenticate(self):
         self.authenticator = Authenticator(self.updater)
@@ -130,6 +143,7 @@ class ElixysInstaller(QtGui.QMainWindow):
     def elixys_box_is_up(self, is_up):
         self.box_is_up.setChecked(is_up)
         self.dialog_btn.setVisible(is_up)
+        self.backup_btn.setVisible(is_up)
         self.box_is_up.show()
 
     def finished_updating(self):
@@ -159,6 +173,18 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def abort_update(self):
         updater.abort.set()
+
+class CopierThread(QtCore.QThread):
+    def __init__(self, updater):
+        QtCore.QThread.__init__(self)
+        self.updater = updater
+
+    def run(self):
+        try:
+            self.updater.make_backup()
+        except Exception as e:
+            logger.error(str(e))
+        self.emit(QtCore.SIGNAL('backup_complete()'))
 
 class Authenticator(QtCore.QThread):
     def __init__(self, updater):

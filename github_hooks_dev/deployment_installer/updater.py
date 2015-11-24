@@ -80,6 +80,21 @@ class Updater(object):
         except paramiko.ssh_exception.AuthenticationException:
             return self.get_elixys_connection(possible_connections)
 
+    def make_backup(self):
+        ver = self.get_latest()
+        hw_path = ver.get_hardware_config_path()
+        logger.info("Backing up: %s" % hw_path)
+        db_path = ver.get_db_path()
+        logger.info("Backing up: %s" % db_path)
+        try:
+            os.mkdir("backups")
+        except OSError:
+            pass
+        local_hw_conf = open(os.path.join("backups", str(time.time()) + "hwconf.ini"), 'w')
+        local_db = open(os.path.join("backups", str(time.time()) + "elixys.db"), 'w')
+        self.sftp.getfo(hw_path, local_hw_conf)
+        self.sftp.getfo(db_path, local_db)
+
     def prompt_reinstall(self):
         logger.warn("This version already exists.  Would you like to reinstall it?")
         overwrite_prompt.set()
@@ -97,7 +112,7 @@ class Updater(object):
         self.sftp.rename(self.updating_from_version.path, old_version_new_name)
         self.updating_from_version.path = old_version_new_name
 
-    def copy_elixys_to_machine(self, version_to_copy_path):
+    def go_app_home_dir(self):
         if self.home_dir:
             self.sftp.chdir(self.home_dir)
         self.sftp.chdir(ELIXYS_INSTALL_DIR)
@@ -105,10 +120,18 @@ class Updater(object):
         home_dir_len = len(dirs) - 2
         self.home_dir = '/'.join(dirs[:home_dir_len]) + '/'
 
+    def get_latest(self):
+        self.go_app_home_dir()
         elixys_dir = self.sftp.listdir()
-        self.updating_from_version = version.find_latest(elixys_dir)
-        if self.updating_from_version:
-            self.updating_from_version.path = "%s/%s" % (self.sftp.getcwd(),str(self.updating_from_version))
+        latest = version.find_latest(elixys_dir)
+        if latest:
+            latest.path = "%s/%s" % (self.sftp.getcwd(),str(latest))
+        return latest
+
+    def copy_elixys_to_machine(self, version_to_copy_path):
+        self.go_app_home_dir()
+
+        self.updating_from_version = self.get_latest()
 
         zip,zip_io = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
         self.updating_to_version = version.determine_elixys_version(zip)

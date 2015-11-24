@@ -133,6 +133,19 @@
      <string>Yes</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="backup_btn">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>10</y>
+      <width>211</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Backup</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
