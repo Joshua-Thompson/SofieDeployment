@@ -90,7 +90,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>370</y>
+      <y>350</y>
       <width>631</width>
       <height>61</height>
      </rect>
@@ -103,7 +103,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>300</y>
+      <y>280</y>
       <width>631</width>
       <height>61</height>
      </rect>
@@ -132,9 +132,16 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionConnections"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
+  <!--<widget class="QStatusBar" name="statusbar"/>-->
+  <action name="actionConnections">
+   <property name="text">
+    <string>Connections</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
