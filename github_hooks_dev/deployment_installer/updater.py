@@ -5,8 +5,10 @@ import logging
 import copy
 import paramiko
 import time
+import threading
 import os
 import json
+import re
 from configobj import ConfigObj
 from threading import Event
 from paramiko.py3compat import input
@@ -270,9 +272,44 @@ def set_passcodes(ip, port, passcodes):
     settings["passcodes"] = json.dumps(codes)
     settings.write()
 
+def kill_process_using_port(updater, port, program_name):
+    input,output,err = updater.ssh_client.exec_command("netstat -lnp | grep '%s'" % port,timeout=20)
+    res = output.read()
+    matches = re.search("([0-9]*)[/]%s" % program_name, res)
+    if matches:
+        pid = matches.group(1)
+        input,output,err = updater.ssh_client.exec_command("kill -9 %s" % pid,timeout=20)
+        logger.info("Killed pid %s? %s" % (pid,output.read()))
+    else:
+        logger.info("Port %s is not being used by a program called %s" % (port,program_name))
+
+def restart_processes(updater):
+    kill_process_using_port(updater, "8888", "python")
+    time.sleep(1)
+    kill_process_using_port(updater, "5000", "python")
+    updater.go_app_home_dir()
+    cmd1 = "cd " + updater.home_dir + ELIXYS_INSTALL_DIR
+    cmd2 = "source bin/activate"
+    cmd3 = "python pyelixys_startup.py"
+    cmds = ";".join([cmd1,cmd2,cmd3])
+
+    input, output, err = updater.ssh_client.exec_command(cmds)
+    def monitor(err):
+        while not err.closed:
+            logger.info(err.readline())
+            time.sleep(.4)
+    t = threading.Thread(target=monitor,args=(err,))
+    t.start()
+
+
 if __name__ == "__main__":
+    """
     downloaded_link_url = 'C:\\Users\\Justin\\Downloads\\download'
     usr_zip_path = input("Type the path the Elixys zip file")
     downloaded_link_url = usr_zip_path if usr_zip_path != "" else downloaded_link_url
     do_install(downloaded_link_url)
-    time.sleep(30)
+    time.sleep(30)"""
+    updater = Updater(ELIXYS_HOST_IP, Port)
+    do_authentication(updater)
+    restart_processes(updater)
+

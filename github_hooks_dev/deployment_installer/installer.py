@@ -66,6 +66,7 @@ class ElixysInstaller(QtGui.QMainWindow):
     def __init__(self):
         super(ElixysInstaller, self).__init__()
         self.copier_thread = None
+        self.runner_thread = None
         self.initUI()
         self.move(400,100)
         self.show()
@@ -106,8 +107,14 @@ class ElixysInstaller(QtGui.QMainWindow):
     def restart_server(self, pos):
         self.app_is_up.hide()
         logger.info("Restarting")
-        if self.app_is_up.isChecked():
-            logger.info("Restarting need to write")
+
+        if self.runner_thread:
+            self.runner_thread.terminate()
+            self.runner_thread.wait()
+
+        self.runner_thread = RunnerThread(self.updater)
+        self.runner_thread.start()
+        return 0
 
     def reconnect(self, pos):
         if self.box_is_up.isChecked():
@@ -173,6 +180,17 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def abort_update(self):
         updater.abort.set()
+
+class RunnerThread(QtCore.QThread):
+    def __init__(self, updater):
+        QtCore.QThread.__init__(self)
+        self.updater = updater
+
+    def run(self):
+        try:
+            updater.restart_processes(self.updater)
+        except Exception as e:
+            logger.error(str(e))
 
 class CopierThread(QtCore.QThread):
     def __init__(self, updater):
