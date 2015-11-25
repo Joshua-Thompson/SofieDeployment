@@ -6,60 +6,13 @@ import time
 import os
 from PyQt4 import QtGui, QtCore,uic
 import updater
-
-logger = logging.getLogger("installer")
-logger.setLevel(logging.DEBUG)
-
-class InstallHandler(QtCore.QObject,logging.Handler):
-    def __init__(self,level=logging.NOTSET):
-        QtCore.QObject.__init__(self)
-        logging.Handler.__init__(self,level)
-        self.qtText = None
-
-    def handle(self, record):
-        self.emit( QtCore.SIGNAL('log_message(QString, QString)'), record.levelname, record.msg)
-
-hdlr = InstallHandler()
-logger.addHandler(hdlr)
-from configobj import ConfigObj
-class ElixysSettings(QtGui.QDialog):
-    def __init__(self,parent=None):
-        super(ElixysSettings,self).__init__(parent)
-        self.ui = self.initUI()
-        self.settings = ConfigObj(os.path.join("dependencies","settings.ini"))
-        self.load_settings()
-        
-    def initUI(self):
-        ui_path = os.path.join('dependencies','ui', 'elixys_settings.ui')
-        self.ui = uic.loadUi(ui_path,self)
-        self.save_btn = self.findChild(QtGui.QPushButton, 'save_btn')
-        self.cancel_btn = self.findChild(QtGui.QPushButton, 'cancel_btn')
-        self.username = self.findChild(QtGui.QLineEdit,'username_txt')
-        self.password = self.findChild(QtGui.QLineEdit,'password_txt')
-        self.ip = self.findChild(QtGui.QLineEdit,'ip_txt')
-        self.port = self.findChild(QtGui.QLineEdit,'port_txt')
-        self.save_btn.clicked.connect(self.save)
-        self.cancel_btn.clicked.connect(self.close)
-
-    def close(self):
-        self.load_settings()
-        super(ElixysSettings,self).close()
-
-    def load_settings(self):
-        ip = self.settings['ip']
-        port = self.settings['port']
-        self.ip.setText(ip)
-        self.port.setText(port)
-
-    def save(self):
-        ip = self.ip.text()
-        port = self.port.text()
-        username = str(self.username.text())
-        password = str(self.password.text())
-        updater.set_passcodes(ip, port,[(username,password)])
-        logger.info("Settings Saved")
-        updater.load_config()
-        QtGui.QDialog.close(self)
+from logger import logger, hdlr
+from qt_threads.authenticator import Authenticator
+from qt_threads.copierthread import CopierThread
+from qt_threads.monitorappisup import MonitorAppIsUp
+from qt_threads.monitorinstall import MonitorInstall
+from qt_threads.runnerthread import RunnerThread
+from ui_controllers.elixyssettings import ElixysSettings
 
 class ElixysInstaller(QtGui.QMainWindow):
     
@@ -180,69 +133,6 @@ class ElixysInstaller(QtGui.QMainWindow):
 
     def abort_update(self):
         updater.abort.set()
-
-class RunnerThread(QtCore.QThread):
-    def __init__(self, updater):
-        QtCore.QThread.__init__(self)
-        self.updater = updater
-
-    def run(self):
-        try:
-            updater.restart_processes(self.updater)
-        except Exception as e:
-            logger.error(str(e))
-
-class CopierThread(QtCore.QThread):
-    def __init__(self, updater):
-        QtCore.QThread.__init__(self)
-        self.updater = updater
-
-    def run(self):
-        try:
-            self.updater.make_backup()
-        except Exception as e:
-            logger.error(str(e))
-        self.emit(QtCore.SIGNAL('backup_complete()'))
-
-class Authenticator(QtCore.QThread):
-    def __init__(self, updater):
-        QtCore.QThread.__init__(self)
-        self.updater = updater
-
-    def run(self):
-        logger.info("Authenticating...")
-        updater.load_config()
-        try:
-            updater.do_authentication(self.updater)
-            self.emit(QtCore.SIGNAL('box_is_up(bool)'), True)
-        except:
-            logger.error("Failed to Authenticate")
-            self.emit(QtCore.SIGNAL('box_is_up(bool)'), False)
-
-class MonitorAppIsUp(QtCore.QThread):
-    def __init__(self):
-        QtCore.QThread.__init__(self)
-
-    def run(self):
-        while True:
-            try:
-                updater.validate_elixys_is_up()
-                self.emit(QtCore.SIGNAL('pyelixys_is_up(bool)'), True)
-            except:
-                self.emit(QtCore.SIGNAL('pyelixys_is_up(bool)'), False)
-            time.sleep(3)
-
-class MonitorInstall(QtCore.QThread):
-    def __init__(self,update_thread):
-        QtCore.QThread.__init__(self)
-        self.update_thread = update_thread
-
-    def run(self):
-        while self.update_thread.isAlive():
-            self.emit( QtCore.SIGNAL('show_buttons(bool)'), updater.overwrite_prompt.isSet() )
-            time.sleep(.4)
-        self.emit( QtCore.SIGNAL('finished_updating()') )
-
 
 def main():
     app = QtGui.QApplication(sys.argv)

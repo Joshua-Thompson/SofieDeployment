@@ -1,7 +1,7 @@
 import httplib
 import socket
 import sys
-import logging
+from logger import logger,pyelixys_log
 import copy
 import paramiko
 import time
@@ -36,10 +36,7 @@ def load_config():
 
 load_config()
 
-logger = logging.getLogger("installer")
-logger.setLevel(logging.DEBUG)
-std_out = logging.StreamHandler(sys.stdout)
-logger.addHandler(std_out)
+
 
 abort = Event()
 overwrite_prompt = Event()
@@ -296,7 +293,8 @@ def restart_processes(updater):
     input, output, err = updater.ssh_client.exec_command(cmds)
     def monitor(err):
         while not err.closed:
-            logger.info(err.readline())
+            output = err.readline()
+            pyelixys_log.info(output.strip('\n'))
             time.sleep(.4)
     t = threading.Thread(target=monitor,args=(err,))
     t.start()
