@@ -1,18 +1,21 @@
-from PyQt4 import QtCore
+from PyQt5.QtCore import pyqtSignal,QThread
 import updater
 from logger import logger
 
-class Authenticator(QtCore.QThread):
+class Authenticator(QThread):
+    box_is_up = pyqtSignal(bool)
+
     def __init__(self, updater):
-        QtCore.QThread.__init__(self)
+        QThread.__init__(self)
         self.updater = updater
+
 
     def run(self):
         logger.info("Authenticating...")
         updater.load_config()
         try:
             updater.do_authentication(self.updater)
-            self.emit(QtCore.SIGNAL('box_is_up(bool)'), True)
+            self.box_is_up.emit(True)
         except:
             logger.error("Failed to Authenticate")
-            self.emit(QtCore.SIGNAL('box_is_up(bool)'), False)
+            self.box_is_up.emit(False)

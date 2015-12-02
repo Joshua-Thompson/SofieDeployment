@@ -1,8 +1,10 @@
-from PyQt4 import QtCore
+from PyQt5.QtCore import pyqtSignal,QThread
+from logger import logger
 
-class CopierThread(QtCore.QThread):
+class CopierThread(QThread):
+    backup_complete = pyqtSignal()
     def __init__(self, updater):
-        QtCore.QThread.__init__(self)
+        QThread.__init__(self)
         self.updater = updater
 
     def run(self):
@@ -10,4 +12,4 @@ class CopierThread(QtCore.QThread):
             self.updater.make_backup()
         except Exception as e:
             logger.error(str(e))
-        self.emit(QtCore.SIGNAL('backup_complete()'))
+        self.backup_complete.emit()

@@ -12,9 +12,11 @@ class NetworkApp(QWebEngineView):
         self.profile.downloadRequested.connect(self.downloading)
         self._page = QWebEnginePage(self.profile, self)
         self._page.loadStarted.connect(self.load_started)
-        self._page.load(QtCore.QUrl("http://sofiebio.herokuapp.com/"))
         self._page.loadProgress.connect(self.load_progress)
         self.setPage(self._page)
+
+    def load_home_page(self):
+        self._page.load(QtCore.QUrl("http://sofiebio.herokuapp.com/"))
 
     def load_started(self):
         print "Loading..."

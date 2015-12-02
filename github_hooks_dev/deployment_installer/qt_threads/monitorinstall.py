@@ -1,14 +1,17 @@
-from PyQt4 import QtCore
+from PyQt5.QtCore import pyqtSignal,QThread
 import updater
 import time
 
-class MonitorInstall(QtCore.QThread):
+class MonitorInstall(QThread):
+    show_buttons = pyqtSignal(bool)
+    finished_updating = pyqtSignal()
+
     def __init__(self,update_thread):
-        QtCore.QThread.__init__(self)
+        QThread.__init__(self)
         self.update_thread = update_thread
 
     def run(self):
         while self.update_thread.isAlive():
-            self.emit( QtCore.SIGNAL('show_buttons(bool)'), updater.overwrite_prompt.isSet() )
+            self.show_buttons.emit(updater.overwrite_prompt.isSet())
             time.sleep(.4)
-        self.emit( QtCore.SIGNAL('finished_updating()') )
+        self.finished_updating.emit()

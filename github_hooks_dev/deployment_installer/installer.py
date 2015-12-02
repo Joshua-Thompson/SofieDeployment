@@ -1,10 +1,9 @@
 #!/usr/bin/python
 import sys
-import logging
 import threading
-import time
 import os
-from PyQt4 import QtGui, QtCore,uic
+from PyQt5 import QtWidgets, uic,QtGui
+import PyQt5.QtCore as QtCore
 import updater
 from logger import logger, hdlr
 from qt_threads.authenticator import Authenticator
@@ -13,9 +12,10 @@ from qt_threads.monitorappisup import MonitorAppIsUp
 from qt_threads.monitorinstall import MonitorInstall
 from qt_threads.runnerthread import RunnerThread
 from ui_controllers.elixyssettings import ElixysSettings
+from ui_controllers.webview import NetworkApp
 
-class ElixysInstaller(QtGui.QMainWindow):
-    
+class ElixysInstaller(QtWidgets.QMainWindow):
+
     def __init__(self):
         super(ElixysInstaller, self).__init__()
         self.copier_thread = None
@@ -27,18 +27,19 @@ class ElixysInstaller(QtGui.QMainWindow):
     def initUI(self):
         ui_path = os.path.join('dependencies','ui', 'elixys_uploader.ui')
         uic.loadUi(ui_path, self)
-        self.connect(hdlr, QtCore.SIGNAL("log_message(QString, QString)"), self.log_message)
-        self.dialog_btn = self.findChild(QtGui.QPushButton,"upload_btn")
+        hdlr.log_message.connect(self.log_message)
+
+        self.dialog_btn = self.findChild(QtWidgets.QPushButton,"upload_btn")
         self.dialog_btn.hide()
         self.dialog_btn.clicked.connect(self.install_elixys_version)
-        self.cancel_install = self.findChild(QtGui.QPushButton,"no_btn")
+        self.cancel_install = self.findChild(QtWidgets.QPushButton,"no_btn")
         self.cancel_install.clicked.connect(self.abort_update)
-        self.overwrite_copy = self.findChild(QtGui.QPushButton,"yes_btn")
+        self.overwrite_copy = self.findChild(QtWidgets.QPushButton,"yes_btn")
         self.overwrite_copy.clicked.connect(self.overwrite_install)
-        self.status_label = self.findChild(QtGui.QTextEdit, "status_txt")
-        self.app_is_up = self.findChild(QtGui.QToolButton, "app_is_up")
-        self.box_is_up = self.findChild(QtGui.QToolButton, "box_is_up")
-        self.backup_btn = self.findChild(QtGui.QPushButton, "backup_btn")
+        self.status_label = self.findChild(QtWidgets.QTextEdit, "status_txt")
+        self.app_is_up = self.findChild(QtWidgets.QToolButton, "app_is_up")
+        self.box_is_up = self.findChild(QtWidgets.QToolButton, "box_is_up")
+        self.backup_btn = self.findChild(QtWidgets.QPushButton, "backup_btn")
         self.backup_btn.hide()
         self.backup_btn.clicked.connect(self.make_backup)
         self.app_is_up.hitButton = self.restart_server
@@ -47,15 +48,22 @@ class ElixysInstaller(QtGui.QMainWindow):
         self.monitor_is_up = MonitorAppIsUp()
         self.monitor_is_up.start()
         self.updater = updater.get_updater()
-        self.connect(self.monitor_is_up, QtCore.SIGNAL("pyelixys_is_up(bool)"), self.pyelixys_is_up)
+        self.monitor_is_up.pyelixys_is_up.connect(self.pyelixys_is_up)
         self.settings = ElixysSettings()
         self.settings.setModal(True)
+        self.network = NetworkApp()
         self.authenticate()
-        self.action_connection = self.findChild(QtGui.QAction, "actionConnections")
+        self.action_connection = self.findChild(QtWidgets.QAction, "actionConnections")
+        self.action_show_network = self.findChild(QtWidgets.QAction, "actionOpen_Network")
         self.action_connection.triggered.connect(self.open_settings)
-        
+        self.action_show_network.triggered.connect(self.open_network)
+
     def open_settings(self):
         self.settings.show()
+
+    def open_network(self):
+        self.network.load_home_page()
+        self.network.show()
 
     def restart_server(self, pos):
         self.app_is_up.hide()
@@ -84,12 +92,12 @@ class ElixysInstaller(QtGui.QMainWindow):
         def unblock_btn():
             self.backup_btn.setDisabled(False)
         self.copier_thread = CopierThread(self.updater)
-        self.connect(self.copier_thread, QtCore.SIGNAL("backup_complete()"), unblock_btn)
+        self.copier_thread.backup_complete.connect(unblock_btn)
         self.copier_thread.start()
 
     def authenticate(self):
         self.authenticator = Authenticator(self.updater)
-        self.connect(self.authenticator, QtCore.SIGNAL("box_is_up(bool)"), self.elixys_box_is_up)
+        self.authenticator.box_is_up.connect(self.elixys_box_is_up)
         self.authenticator.start()
 
     def show_buttons(self, do_show):
@@ -109,20 +117,22 @@ class ElixysInstaller(QtGui.QMainWindow):
     def finished_updating(self):
         self.dialog_btn.show()
         self.show_buttons(False)
-        
+
     def install_elixys_version(self):
-        file_name = QtGui.QFileDialog.getOpenFileName(self, 'Install',
+        file_name = QtWidgets.QFileDialog.getOpenFileName(self, 'Install',
                 '.')
 
-        if file_name:
+        if type(file_name) == str:
             t_update = threading.Thread(target=self.updater.do_install, args=(file_name,))
             t_update.start()
             self.dialog_btn.hide()
 
             self.monitor_thread = MonitorInstall(t_update)
-            self.connect( self.monitor_thread, QtCore.SIGNAL("show_buttons(bool)"), self.show_buttons )
-            self.connect( self.monitor_thread, QtCore.SIGNAL("finished_updating()"), self.finished_updating )
+            self.monitor_thread.show_buttons.connect(self.show_buttons)
+            self.monitor_thread.finished_updating.connect(self.finished_updating())
             self.monitor_thread.start()
+        else:
+            logger.info("Cancelling Upload")
 
     def log_message(self, log_level, message):
         self.status_label.append(message)
@@ -135,7 +145,7 @@ class ElixysInstaller(QtGui.QMainWindow):
         updater.abort.set()
 
 def main():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex = ElixysInstaller()
     app.exec_()
     sys.exit(0)

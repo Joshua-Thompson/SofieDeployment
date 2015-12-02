@@ -1,10 +1,10 @@
-from PyQt4 import QtCore
+from PyQt5.QtCore import QThread
 import updater
 from logger import logger
 
-class RunnerThread(QtCore.QThread):
+class RunnerThread(QThread):
     def __init__(self, updater):
-        QtCore.QThread.__init__(self)
+        QThread.__init__(self)
         self.updater = updater
 
     def run(self):

@@ -1,10 +1,10 @@
-from PyQt4 import QtGui, QtCore,uic
+from PyQt5 import QtWidgets, QtCore,uic
 import updater
 from configobj import ConfigObj
 import os
 from logger import logger
 
-class ElixysSettings(QtGui.QDialog):
+class ElixysSettings(QtWidgets.QDialog):
     def __init__(self,parent=None):
         super(ElixysSettings,self).__init__(parent)
         self.ui = self.initUI()
@@ -14,12 +14,12 @@ class ElixysSettings(QtGui.QDialog):
     def initUI(self):
         ui_path = os.path.join('dependencies','ui', 'elixys_settings.ui')
         self.ui = uic.loadUi(ui_path,self)
-        self.save_btn = self.findChild(QtGui.QPushButton, 'save_btn')
-        self.cancel_btn = self.findChild(QtGui.QPushButton, 'cancel_btn')
-        self.username = self.findChild(QtGui.QLineEdit,'username_txt')
-        self.password = self.findChild(QtGui.QLineEdit,'password_txt')
-        self.ip = self.findChild(QtGui.QLineEdit,'ip_txt')
-        self.port = self.findChild(QtGui.QLineEdit,'port_txt')
+        self.save_btn = self.findChild(QtWidgets.QPushButton, 'save_btn')
+        self.cancel_btn = self.findChild(QtWidgets.QPushButton, 'cancel_btn')
+        self.username = self.findChild(QtWidgets.QLineEdit,'username_txt')
+        self.password = self.findChild(QtWidgets.QLineEdit,'password_txt')
+        self.ip = self.findChild(QtWidgets.QLineEdit,'ip_txt')
+        self.port = self.findChild(QtWidgets.QLineEdit,'port_txt')
         self.save_btn.clicked.connect(self.save)
         self.cancel_btn.clicked.connect(self.close)
 
@@ -41,4 +41,4 @@ class ElixysSettings(QtGui.QDialog):
         updater.set_passcodes(ip, port,[(username,password)])
         logger.info("Settings Saved")
         updater.load_config()
-        QtGui.QDialog.close(self)
+        QtWidgets.QDialog.close(self)

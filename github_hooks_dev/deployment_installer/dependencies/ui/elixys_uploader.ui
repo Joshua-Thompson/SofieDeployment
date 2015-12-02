@@ -167,12 +167,18 @@
      <string>Settings</string>
     </property>
     <addaction name="actionConnections"/>
+    <addaction name="actionOpen_Network"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
   <action name="actionConnections">
    <property name="text">
     <string>Connections</string>
+   </property>
+  </action>
+  <action name="actionOpen_Network">
+   <property name="text">
+    <string>Open Network</string>
    </property>
   </action>
  </widget>

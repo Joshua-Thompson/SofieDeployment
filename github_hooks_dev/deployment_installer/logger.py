@@ -1,7 +1,7 @@
 import os
 import sys
 import logging
-from PyQt4 import QtCore
+from PyQt5.QtCore import pyqtSignal,QObject
 
 try:
     os.mkdir('logs')
@@ -18,14 +18,16 @@ pyelixys_log.setLevel(logging.DEBUG)
 pyelixys_log_file = logging.FileHandler(os.path.join('logs', 'pyelixys.log'))
 pyelixys_log.addHandler(pyelixys_log_file)
 
-class InstallHandler(QtCore.QObject,logging.Handler):
+class InstallHandler(QObject,logging.Handler):
+    log_message = pyqtSignal('QString','QString')
+
     def __init__(self,level=logging.NOTSET):
-        QtCore.QObject.__init__(self)
+        QObject.__init__(self)
         logging.Handler.__init__(self,level)
         self.qtText = None
 
     def handle(self, record):
-        self.emit( QtCore.SIGNAL('log_message(QString, QString)'), record.levelname, record.msg)
+        self.log_message.emit(record.levelname, record.msg)
 
 hdlr = InstallHandler()
 logger.addHandler(hdlr)
