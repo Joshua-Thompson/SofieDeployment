@@ -51,7 +51,6 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.monitor_is_up.pyelixys_is_up.connect(self.pyelixys_is_up)
         self.settings = ElixysSettings()
         self.settings.setModal(True)
-        self.network = NetworkApp()
         self.authenticate()
         self.action_connection = self.findChild(QtWidgets.QAction, "actionConnections")
         self.action_show_network = self.findChild(QtWidgets.QAction, "actionOpen_Network")
@@ -62,6 +61,7 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.settings.show()
 
     def open_network(self):
+        self.network = NetworkApp()
         self.network.load_home_page()
         self.network.show()
 
