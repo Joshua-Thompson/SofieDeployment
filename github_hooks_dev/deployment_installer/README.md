@@ -12,7 +12,10 @@ You will also need [Microsoft Visual C++ Compiler for Python](https://www.micros
 [PyQt 4](https://www.riverbankcomputing.com/software/pyqt/download) will also need to be installed.  Add the path of QT designer and other exe's to your systems path.
 
 Then,
-`pip install -r requirements.txt`
+```
+pip install --use-wheel --no-index --find-links=https://github.com/sfbahr/PyCrypto-Wheels/raw/master/pycrypto-2.6.1-cp35-none-win32.whl pycrypto
+pip install -r requirements.txt
+```
 
 You are now ready to execute the program
 `python installer.py`
