@@ -122,14 +122,15 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         file_name = QtWidgets.QFileDialog.getOpenFileName(self, 'Install',
                 '.')
 
-        if type(file_name) == str:
+        if file_name and file_name[0] != "":
+            file_name = file_name[0]
             t_update = threading.Thread(target=self.updater.do_install, args=(file_name,))
             t_update.start()
             self.dialog_btn.hide()
 
             self.monitor_thread = MonitorInstall(t_update)
             self.monitor_thread.show_buttons.connect(self.show_buttons)
-            self.monitor_thread.finished_updating.connect(self.finished_updating())
+            self.monitor_thread.finished_updating.connect(self.finished_updating)
             self.monitor_thread.start()
         else:
             logger.info("Cancelling Upload")
