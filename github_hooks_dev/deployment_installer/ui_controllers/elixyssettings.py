@@ -38,7 +38,10 @@ class ElixysSettings(QtWidgets.QDialog):
         port = self.port.text()
         username = str(self.username.text())
         password = str(self.password.text())
-        updater.set_passcodes(ip, port,[(username,password)])
+        codes = None
+        if username != "" and password != "":
+            codes = [(username,password)]
+        updater.set_passcodes(ip, port,codes)
         logger.info("Settings Saved")
         updater.load_config()
         QtWidgets.QDialog.close(self)
