@@ -12,7 +12,7 @@ from qt_threads.monitorappisup import MonitorAppIsUp
 from qt_threads.monitorinstall import MonitorInstall
 from qt_threads.runnerthread import RunnerThread
 from ui_controllers.elixyssettings import ElixysSettings
-from ui_controllers.webview import NetworkApp
+from ui_controllers.webview import ElixysBrowser
 
 class ElixysInstaller(QtWidgets.QMainWindow):
 
@@ -61,9 +61,8 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.settings.show()
 
     def open_network(self):
-        self.network = NetworkApp()
-        self.network.load_home_page()
-        self.network.show()
+        self.network_browser = ElixysBrowser()
+        self.network_browser.show()
 
     def restart_server(self, pos):
         self.app_is_up.hide()
