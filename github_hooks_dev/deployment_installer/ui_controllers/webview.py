@@ -38,7 +38,7 @@ class ElixysBrowser(QMainWindow):
         self.statusBar().clearMessage()
 
     def download_in_progress(self,bytesReceived, bytesTotal):
-        self.statusBar().showMessage( "Downloading ... %d/%d" % (bytesReceived,bytesTotal) )
+        self.statusBar().showMessage( "Downloaded ... %d" % bytesReceived )
 
     def download_complete(self):
         self.statusBar().clearMessage()
