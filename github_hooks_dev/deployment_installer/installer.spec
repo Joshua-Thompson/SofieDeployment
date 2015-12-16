@@ -4,9 +4,15 @@ block_cipher = None
 
 
 a = Analysis(['installer.py'],
-             pathex=['C:\\Users\\Justin\\Desktop\\SofieDeployment\\github_hooks_dev\\deployment_installer'],
-             binaries=[],
-             datas=None,
+             pathex=['Qt'],
+             binaries=[('C:\\Qt\\5.5\\msvc2013\\bin\\QtWebEngineProcess.exe', 'bin')],
+             datas=[('C:\\Qt\\5.5\\msvc2013\\.tag','.'),
+                    ('C:\\Qt\\5.5\\msvc2013\\icudtl.dat', '.'),
+                    ('C:\\Qt\\5.5\\msvc2013\\qtwebengine_resources_100p.pak', 'bin'),
+                    ('C:\\Qt\\5.5\\msvc2013\\qtwebengine_resources.pak', 'bin'),
+                    ('C:\\Qt\\5.5\\msvc2013\\qtwebengine_resources_200p.pak', 'bin'),
+                    ('qt.conf', '.')
+                    ],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
