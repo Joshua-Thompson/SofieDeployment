@@ -8,6 +8,7 @@ import updater
 import version
 from logger import logger, hdlr
 import threading
+import time
 from qt_threads.authenticator import Authenticator
 from qt_threads.copierthread import CopierThread
 from qt_threads.monitorappisup import MonitorAppIsUp
@@ -73,8 +74,12 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.settings.show()
 
     def run_sim(self):
-        t = threading.Thread(target=os.system, args=("run_pyelixys_server\\run_pyelixys_server.exe sim",))
+        t = threading.Thread(target=os.system, args=("cd run_pyelixys_server & run_pyelixys_server.exe sim",))
         t.start()
+        time.sleep(8)
+        self.network_browser = ElixysBrowser()
+        self.network_browser.view.load("http://localhost:5000/static/index.html")
+        self.network_browser.show()
 
     def open_network(self):
         self.network_browser = ElixysBrowser()
