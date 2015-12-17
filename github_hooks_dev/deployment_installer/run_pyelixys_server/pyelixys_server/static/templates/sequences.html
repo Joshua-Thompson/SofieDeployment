@@ -1,0 +1,49 @@
+<script type="text/html" id="sequences-template">
+  <div class="mainpane" data-bind="sidebarToggle: isSidebarVisible()">
+    <div data-bind="template: { name: 'top-header-template', afterRender: postRender() }"></div>
+    <div id="sequence-list-content">
+      <div id="sequence-filters" class="indent">
+        <div class="input-append input-group date date-picker">
+          <input id="input-date-start" data-bind="value: filterDateStart" placeholder="MM/DD/YYYY">
+          <span class="input-group-addon add-on"><i class="glyphicon glyphicon-calendar"></i></span>
+        </div>
+        <span id="date-picker-text">TO</span>
+        <div class="input-append input-group date date-picker">
+          <input id="input-date-end" data-bind="value: filterDateEnd" placeholder="MM/DD/YYYY">
+          <span class="input-group-addon add-on"><i class="glyphicon glyphicon-calendar"></i></span>
+        </div>
+        <div class="input-group search-button">
+          <span class="input-group-addon glyphicon glyphicon-search"></span>
+          <input class="form-control" type="text" id="sequence-search-button" data-bind="value: filterName, valueUpdate: 'keyup'" placeholder="SEARCH" maxlength="50" />
+        </div>
+      </div>
+
+      <div id="new-sequence" class="indent">
+        <button data-bind="click: newSequence" id="new-sequence-button" >+ NEW SEQUENCE</button>
+		<button class="sequence-button" data-bind="click: importSequence" id="import-sequence-button">IMPORT SEQUENCE</button>
+      </div>
+
+      <div id="sequences-header">
+        <div>Name</div>
+        <div class="date sequences-header-date">Date Created</div>
+        <div></div>
+      </div>
+      <div id="sequence-list-pane" class="indent">
+        <div data-bind="foreach: sequencesFiltered" id="sequence-list">
+          <div class="sequence-row">
+            <div data-bind="click: $parent.editSequence, text: Elixys.truncate(details.name, 45)" class="sequence-name"></div>
+            <div data-bind="text: $parent.trimDate(date)" class="sequence-text sequence-date date"></div>
+            <div class="sequence-edit-run">
+              <span data-bind="click: $parent.copySequence" class="sequence-text underline sequence-action">COPY</span>
+              <span class="sequence-text" style="padding: 0 15px 0 15px;">|</span>
+              <span data-bind="click: $parent.deleteSequence" class="sequence-text underline sequence-action">DELETE</span>
+              <span class="sequence-text" style="padding: 0 15px 0 15px;">|</span>
+              <span data-bind="click: $parent.export_sequence.bind(details)" class="sequence-text underline sequence-action">EXPORT</span>
+            </div>
+            <div data-bind="text: Elixys.truncate(details.comment, 55)" class="sequence-comment sequence-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>

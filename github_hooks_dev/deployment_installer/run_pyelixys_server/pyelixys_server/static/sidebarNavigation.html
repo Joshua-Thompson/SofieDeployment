@@ -1,0 +1,11 @@
+<script type="text/html" id="sidebar">
+  <div id="sidebarnav" data-bind="sidebarToggle: isSidebarVisible(), initialOffset: -100">
+    <ul data-bind="foreach: options">
+      <div data-bind="css: { 'sidebar-selected': pageName == $parent.currentPage() }, click: $parent.executeAction">
+        <span data-bind="css: imageClass"></span>
+        <span data-bind="text: pageName"></span>
+      </div>
+    </ul>
+  </div>
+  <div data-bind="sidebarToggle: isSidebarVisible(), click: toggleSidebar, visible: !isSystemPage()" id="sidebar-toggle">&equiv;</div>
+</script>

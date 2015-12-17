@@ -1,0 +1,54 @@
+<script type="text/html" id="transfer-parameters-popup-template">
+  <div id="transfer-parameters-popup">
+    <span class="title">TRANSFER parameters:</span>
+    <div class="parameter-fields-container">
+      <ul data-bind="with: data">
+        <li>
+            <span>Duration</span>
+            <span><!--ko text: transferduration() --><!--/ko--><span class="parameter-small">&nbsp;sec</span>
+			</span>
+          </li>
+          <li>
+            <span>Destination</span>
+            <span><!--ko text: destination --><!--/ko--> <!--ko text: destination() === 'reactor' ? targetreactor() + 1 : '' --><!--/ko-->
+            </span>
+          </li>
+          <li>
+            <span>Pressure</span>
+            <span><!--ko text: pressure --><!--/ko--><span class="parameter-small">&nbsp;psi</span>
+			</span>
+          </li>
+          <li>
+            <span>Source reactor</span>
+            <span data-bind="text: sourcereactor() + 1"></span>
+          </li>
+          <li>
+            <span>Mode</span>
+            <span data-bind="text: mode"></span>
+          </li>
+          <li>
+            <span>Stir source</span>
+            <span><!--ko text: stirspeedsource --><!--/ko--><span class="parameter-small">&nbsp;rpm</span>
+			</span>
+          </li>
+          <li>
+            <span>Stir target</span>
+            <span><!--ko text: stirspeedtarget --><!--/ko--><span class="parameter-small">&nbsp;rpm</span>
+			</span>
+          </li>
+          <li>
+            <span>Message</span>
+            <span><!--ko text: message --><!--/ko-->
+			&nbsp;</span>
+          </li>
+      </ul>
+	  </div>
+	  <div class="save-note-container">
+	  <span>Save a note about this operation:</span>
+      <textarea placeholder="Click to type a note" data-bind="textInput: $parent.run_note" rows="10" maxlength="1024"/>
+	  </div>
+	  <div class="save-note-button">
+      <input type="button" class="save-note-button" value="Save" data-bind="click: $parent.save_message"/>
+	  </div>
+  </div>
+</script>

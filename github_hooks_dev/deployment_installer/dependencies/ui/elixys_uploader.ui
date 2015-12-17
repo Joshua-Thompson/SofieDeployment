@@ -153,7 +153,7 @@
      <x>0</x>
      <y>0</y>
      <width>636</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -168,6 +168,7 @@
     </property>
     <addaction name="actionConnections"/>
     <addaction name="actionOpen_Network"/>
+    <addaction name="actionStart_Simulator"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
@@ -179,6 +180,11 @@
   <action name="actionOpen_Network">
    <property name="text">
     <string>Open Network</string>
+   </property>
+  </action>
+  <action name="actionStart_Simulator">
+   <property name="text">
+    <string>Start Simulator</string>
    </property>
   </action>
  </widget>

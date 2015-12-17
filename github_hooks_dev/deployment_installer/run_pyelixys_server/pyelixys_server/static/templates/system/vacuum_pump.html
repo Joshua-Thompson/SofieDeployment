@@ -1,0 +1,27 @@
+<script type="text/html" id="vacuum-pump-template">
+	<input type="radio" class="radio-option no-border"
+                    data-bind="checked:state(),
+                               enable: canChangeState(),
+                               attr: {name: id + 'on'}"
+                    value="On"
+                    />
+		<label class="wireframe-button" data-bind="click: on, attr:{for: id + 'on'}">ON</label>
+		
+	<input type="radio" name="target_stir" class="radio-option no-border"
+                    data-bind="checked:state(),
+                               enable: canChangeState(),
+                               attr:{name: id + 'off'}"
+                    value="Off"
+                    />
+		<label class="wireframe-button right-button"
+                   data-bind="click: off,
+                              attr:{for: id + 'off'}">OFF</label>
+        <div class="calibration-readout top-margin-20" style="text-align: center;">
+            <span data-bind="numericText: pressure(), sigDigits: 2"></span>
+            <span>&nbsp; volts</span>
+        </div>
+        <div class="calibration-readout top-margin-20" style="text-align: center;">
+            <span data-bind="numericText: mmHg(), sigDigits: 3"></span>
+            <span>&nbsp; mmHg</span>
+        </div>
+</script>

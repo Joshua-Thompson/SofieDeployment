@@ -1,0 +1,49 @@
+<script type="text/html" id="elute-parameters-popup-template">
+  <div id="elute-parameters-popup">
+    <span class="title">ELUTE ISOTOPE parameters:</span>
+     <div class="parameter-fields-container">
+      <ul data-bind="with: data">
+          <li>
+            <span>Reactor</span>
+            <span data-bind="text: reactor() + 1"></span>
+          </li>
+          <li data-bind="with: $parent.withReagent(reagentpos)">
+            <span>Reagent</span>
+            <span><!--ko text: Elixys.truncate(name, 28) --><!--/ko-->
+			&nbsp;
+			</span>
+          </li>
+		  <li data-bind="with: $parent.withReagent(reagentpos)">
+		    <span>Position</span>
+		    <span>
+              Cassette <!--ko text: cassette--><!--/ko-->
+              -
+              Reagent <!--ko text: reagent--><!--/ko-->
+            </span>
+		 </li>
+          <li>
+            <span>Duration</span>
+            <span><!--ko text: elutetime --><!--/ko--><span class="parameter-small">&nbsp;sec</span>
+			</span>
+          </li>
+          <li>
+            <span>Pressure</span>
+            <span><!--ko text: elutepressure --><!--/ko--><span class="parameter-small">&nbsp;psi</span>
+			</span>
+          </li>
+          <li>
+            <span class="parameter-label">Message</span>
+            <span><!--ko text: message --><!--/ko-->
+			&nbsp;</span>
+          </li>
+      </ul>
+	  </div>
+	  <div class="save-note-container">
+	  <span>Save a note about this operation:</span>
+      <textarea placeholder="Click to type a note" data-bind="textInput: $parent.run_note" rows="10" maxlength="1024"/>
+	  </div>
+	  <div class="save-note-button">
+      <input type="button" class="save-note-button" value="Save" data-bind="click: $parent.save_message"/>
+    </div>
+  </div>
+</script>

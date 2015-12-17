@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+		<script type=text/javascript src="{{url_for('static', filename='javascript/lib/jquery.min.js') }}"></script>
+        <script>
+         var get_structure = '{"get_structure" : {"type": "component", "componenttype":"transfer"}}';
+        </script>
+           
+    </head>
+    <body>
+	
+        
+                
+        <h3>Command Line</h3>
+        
+        <textarea rows="5" cols="50" id="command_line">
+        {"request":"enable_remote","request_data":{"enable_remote":{"wifi_name": "YourNetworkName", "wifi_password": "NetworkPassword"}}}
+        </textarea>
+        <br>
+        <button onclick="myFunction()">Submit Request</button>
+        
+            <p id="command_line_display"></p>
+            <p id="server_response"></p>
+            
+            <script>
+                function myFunction() {
+                    var request = document.getElementById("command_line").value;
+                    var json_request = JSON.parse(request);
+                    request_handler = json_request.request;
+                    request_data = JSON.stringify(json_request.request_data);
+                    document.getElementById("command_line_display").innerHTML = "handler: "+ request_handler + " <br> " + "data: " + request_data;
+                    
+                    
+    
+                                                                $.post(request_handler,request_data,function(result)
+                                                                       {
+                                                                       server_response = JSON.stringify(result);
+                                                                       document.getElementById("server_response").innerHTML = server_response;
+                                                                       },'json');
+                                    }
+                
+            </script>
+       
+        
+    </body>
+</html>
+
+

@@ -1,0 +1,10 @@
+<script type="text/html" id="heatcalibrate-template">	
+	<div class="heat-wrapper" data-bind="foreach: {data: reactors, as: 'reactor'}">
+		<div class="calibrate-section heater-container">
+		<span class="calibration-header heat-header">REACTOR <!--ko text: reactorId + 1--><!--/ko--></span>
+		  <div class="main-readout" data-bind="template: { name: 'heater-readout-template', data: heater}"></div>
+		  <div data-bind="template: { name: 'heater-readout-template', foreach: heaters}"></div>
+		  <div data-bind="template: { name: 'heater-control-template', foreach: allHeaters}"></div>
+		</div>
+	</div>
+</script>

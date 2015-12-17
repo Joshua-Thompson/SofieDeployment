@@ -1,0 +1,69 @@
+<script type="text/html" id="running-react-template">
+  <div class="running-operation-container">
+    <div class="running-header">
+      <span class="running-operation-name">REACT:</span>
+      <span class="running-operation-timer" data-bind="text: operationTimer"></span>
+      <div class="running-override-timer-button" data-bind="visible: !timerOverridden() && timerOverrideReady(), click: overrideTimer">Override Timer</div>
+      <div class="running-override-timer-button" data-bind="visible: timerOverridden() || continueRequired(), click: continueSequence">Continue</div>
+    </div>
+
+	<div class="running-message-block">
+	<ul class="running-message-list">
+	  <li>
+	  <span class="running-info">Seal Position: <!--ko text: (currentOperationData().sealposition
+	  + 1)--><!--/ko--></span>
+      </li>
+	  <li>
+	  <span class="running-info-status" data-bind="text: readings.operation_status.message"></span>
+	  </li>
+	  <li>
+	  <span class="user-message" data-bind="text: currentOperationData().message"></span>
+	  </li>
+	 </ul>
+	</div>
+
+
+	<div class="running-container">
+	<div class="cameras-container">
+	<div class="running-camera camera-1">
+      <div class="running-camera-label"><!--ko text: videoLabelLeft--><!--/ko--></div>
+	  <div class="running-camera-refresh" data-bind="click: reloadLeftVideo"></div>
+      <video class="running-video" id="reactvideo-left" src="" data-bind="style: { left: videoLeftPosition() }" width="514" height="385" autoplay>
+        Your browser cannot play this video.
+      </video>
+    </div>
+	<div class="clear"></div>
+	</div>
+
+    <div class="running-readings-container">
+      <div class="running-readings-row">
+	    <div class="running-readings-label">Temp</div>
+        <div class="running-readings-value running-readings-large-text">
+          <!--ko text: readings.temperature.current--><!--/ko-->
+          /
+          <!--ko text: readings.temperature.target--><!--/ko-->
+          <span class="small">C</span>
+        </div>
+      </div>
+      <div class="running-readings-sublabel">Current / Target</div>
+
+      <div class="running-readings-row">
+	    <div class="running-readings-label" data-bind="text:'Activity ' + (readings.sourceReactor()+1)"></div>
+        <div class="running-readings-value running-readings-small-text">
+          <!--ko text: readings.activity1.reactor--><!--/ko-->
+          /
+          <!--ko text: readings.activity1.cartridgeA--><!--/ko-->
+          /
+          <!--ko text: readings.activity1.cartridgeB--><!--/ko-->
+        </div>
+      </div>
+      <div class="running-readings-sublabel">Reactor / Cartridge A / B</div>
+      <span data-bind="visible: timerOverridden()">
+        <toggle-stir params="currentMotorSpeed: readings.sourceMotor,
+                     reactor: 'Source',
+                     enabled: toggleStirEnabled"></toggle-stir>
+      </span>
+    </div>
+   </div>
+  </div>
+</script>

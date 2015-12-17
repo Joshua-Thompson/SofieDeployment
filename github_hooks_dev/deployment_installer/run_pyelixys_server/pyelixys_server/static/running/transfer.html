@@ -1,0 +1,135 @@
+<script type="text/html" id="running-transfer-template">
+  <div class="running-operation-container">
+    <div class="running-header">
+      <span class="running-operation-name">TRANSFER:</span>
+      <span class="running-operation-timer" data-bind="visible: currentOperationData().destination!=='hplc', text: operationTimer"></span>
+      <div data-bind="visible: !timerOverridden() && timerOverrideReady(), click: overrideTimer, text: currentOperationData().destination=='hplc' ? 'Override' : 'Override Timer'" class="running-override-timer-button"></div>
+      <div class="running-override-timer-button" data-bind="visible: timerOverridden() || continueRequired(), click: continueSequence">Continue</div>
+      <div class="running-override-timer-button" data-bind="visible: runningOperation().userPrompt(), click: runningOperation().userResponse">HPLC Tube Connected</div>
+    </div>
+	
+	<div class="running-message-block">
+	<ul class="running-message-list">
+	  <li>
+	  <span class="running-info">Mode: <!--ko text: modeDisplay(currentOperationData().mode)--><!--/ko--></span>
+      </li>
+	  <li>
+	  <span class="running-info-status" data-bind="text: readings.operation_status.message"></span>
+	  </li>
+	  <li>
+	  <span class="user-message" data-bind="text: currentOperationData().message"></span>
+	  </li>
+	 </ul>
+	</div>
+	
+	
+	<div class="running-container">
+	<div class="cameras-container">
+	    <div class="running-camera camera-1">
+      <div class="running-camera-label"><!--ko text: videoLabelLeft--><!--/ko--></div>
+	  <div class="running-camera-refresh" data-bind="click: reloadLeftVideo"></div>
+      <video class="running-video" id="transfervideo-left" src="" data-bind="style: { left: videoLeftPosition() }" width="514" height="385" autoplay>
+        Your browser cannot play this video.
+      </video>
+    </div>
+	<div class="running-camera camera-2" data-bind="visible: currentOperationData().destination!=='collection vial' && currentOperationData().destination!=='hplc' && videoLabelRight() !== videoLabelLeft(), if: videoLabelRight() !== 0 && videoLabelRight() !== videoLabelLeft()">
+      <div class="running-camera-label"><!--ko text: videoLabelRight--><!--/ko--></div>
+	  <div class="running-camera-refresh" data-bind="click: reloadRightVideo"></div>
+      <video class="running-video" id="transfervideo-right" src="" data-bind="style: { left: videoRightPosition() }" width="514" height="385" autoplay>
+        Your browser cannot play this video.
+      </video>
+    </div>
+	<div class="clear"></div>
+	</div>
+
+	<div class="running-readings-container">
+	      <div class="running-readings-row">
+		    <div class="running-readings-label">Pressure</div>
+	        <div data-bind="visible: !timerOverridden() && !continueRequired() && !runningOperation().pressureModifiable()" class="running-readings-value running-readings-large-text">
+	          <!--ko text: readings.pressure.current--><!--/ko-->
+	          /
+	          <!--ko text: readings.pressure.target--><!--/ko-->
+	          <span class="small">psi</span>
+	        </div>
+	        <div data-bind="visible: timerOverridden() || continueRequired() || runningOperation().pressureModifiable()" class="running-readings-pressure">
+	          <input type="button" data-bind="click: decPressure, enable: decPressureEnabled"/>
+	          <input type="button" data-bind="click: incPressure, enable: incPressureEnabled"/>
+	        </div>
+	        <div data-bind="visible: timerOverridden() || continueRequired() || runningOperation().pressureModifiable()"
+				 class="running-readings-value reduced running-readings-large-text">
+	          <!--ko text: readings.pressure.current--><!--/ko-->
+	          /
+	          <!--ko text: readings.pressure.target--><!--/ko-->
+	          <span class="small">psi</span>
+	        </div>
+	      </div>
+	      <div class="running-readings-sublabel">Current / Target</div>
+
+	      <div class="running-readings-row">
+		   <div class="running-readings-label" data-bind="text:'Activity ' + (readings.sourceReactor()+1)"></div>
+	        <div class="running-readings-value running-readings-small-text">
+	          <!--ko text: readings.activity1.reactor--><!--/ko-->
+	          /
+	          <!--ko text: readings.activity1.cartridgeA--><!--/ko-->
+	          /
+	          <!--ko text: readings.activity1.cartridgeB--><!--/ko-->
+	        </div>
+	      </div>
+	      <div class="running-readings-row" data-bind="visible: readings.hasTargetReactor">
+		   <div class="running-readings-label" data-bind="text:'Activity ' + (readings.targetReactor()+1)"></div>
+	        <div class="running-readings-value running-readings-small-text">
+	          <!--ko text: readings.activity2.reactor--><!--/ko-->
+	          /
+	          <!--ko text: readings.activity2.cartridgeA--><!--/ko-->
+	          /
+	          <!--ko text: readings.activity2.cartridgeB--><!--/ko-->
+	        </div>
+	      </div>
+		  <div class="running-readings-sublabel">Reactor / Cartridge A / B</div>
+
+	        <div class="running-readings-row" data-bind="visible: currentOperationData().destination=='hplc'">
+	            <div class="running-readings-label">Fluid</div>
+	            <div data-bind="visible: true" class="running-readings-value running-readings-large-text">
+	          <!--ko text: readings.hplc.fluid--><!--/ko-->
+	        </div>
+	      </div>
+
+			<div class="running-readings-row" data-bind="visible: currentOperationData().destination=='hplc' && !runningOperation().showInjectLoad()">
+				<div class="running-readings-label" data-bind="text:'Position'"></div>
+				<div data-bind="visible: true" class="running-readings-value running-readings-large-text">
+					<span data-bind="text: readings.hplc.position"></span>
+				</div>
+			</div>
+		
+		  		  <span data-bind="visible: currentOperation().isStirable() && timerOverridden()">
+			  <toggle-stir params="currentMotorSpeed: readings.sourceMotor,
+				   reactor: 'Source',
+				   enabled: toggleStirEnabled">
+				   </toggle-stir>
+          </span>
+		  <span data-bind="visible: readings.hasTargetReactor && timerOverridden()
+		  && currentOperation().isStirable()">
+			  <toggle-stir params="currentMotorSpeed: readings.targetMotor,
+				   reactor: 'Target',
+	               enabled: toggleStirEnabled"
+				   ></toggle-stir>
+		  </span>
+	      
+		  <div data-bind="visible: runningOperation().showInjectLoad" class="hplc-button-wrapper">
+			  <div data-bind="click: changeHplcPosition_Inject, css: {selected: readings.hplc.positionInject()}" class="wireframe-button manual-hplc">Inject</div>
+			  
+			  <div data-bind="click: changeHplcPosition_Load, css: {selected: readings.hplc.positionLoad()}" class="wireframe-button manual-hplc">Load</div>
+		  </div>	  
+		  
+	      <div class="hplc-position-readout" data-bind="visible: runningOperation().showInjectLoad">
+		  	 <!--ko text: readings.hplc.position_message--><!--/ko-->
+		  </div>
+
+	        </div>
+	    </div>
+		</div>
+
+	</div>
+  </div>
+</script>
+    

@@ -1,0 +1,23 @@
+<script type="text/html" id="import-sequence-popup-template">
+  <div>
+    <div data-bind="visible: visible()" class="new-sequence-popup popup">
+      <div class="new-sequence-box import-popup popup-box">
+        <div data-bind="click: close" class="popup-box-close-button">X</div>
+        <div class="new-sequence-title center-align-wrapper">
+          <div data-bind="text: titleText" class="center-align-content"></div>
+        </div>
+        <div class="new-sequence-box-fields">
+		  <form id="import-sequence-form">
+            <div class="import-sequence-box-text">Name</div>
+            <input class="import-sequence-input" data-bind="textInput: name, value: currentImportName()" type="text" maxlength="64"/>
+            <button data-bind="click: create, enable: enabled, text: buttonText" class="import-sequence-create-button"></button>
+            <label class="popup-import-field">
+             <input id="import-sequence-input" data-bind="event: { change: validateImport() }" type="file" name="sequence"/>
+             <span class="sequence-button">Select</span>
+            </label>
+		  </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>

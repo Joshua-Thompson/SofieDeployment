@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Elixys</title>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="static/bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <link href="static/style.css" type="text/css" media="all" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/datepicker.css">
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico" />
+
+    {% assets "js_calibration" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {%endassets%}
+    <style>
+        .mainpane{
+            left: 0px;
+        }
+    </style>
+
+  </head>
+  
+  <body>
+
+    <!-- VERY IMPORTANT
+         This div is where all the knockout templates get appended -->
+    <div id="templates"></div>
+    
+    <!--<div id="status-bar" data-bind="css: { enable: isIOS }"></div>-->
+
+    <div id="content">
+      <div data-bind="template: { name: 'system-template' }" id="system" class="template-content"></div>
+      <div data-bind="template: { name: 'notification-popup-template' }" id="notification-popup"></div>
+    </div>
+    </body>
+</html>

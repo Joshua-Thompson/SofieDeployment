@@ -1,0 +1,5 @@
+<script type="text/html" id="stopcock-template">
+	<span class="calibration-header" data-bind="text: 'Stopcock ' + name"></span>
+	<div class="wireframe-button" data-bind="click: turnClockwise, css: {'selected' : state()}">CLOCK-WISE</div>
+	<div class="wireframe-button right-button" data-bind="click: turnCounterClockwise, css: {'selected' : !state()}">COUNTER</div>
+</script>

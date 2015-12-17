@@ -1,0 +1,47 @@
+<script type="text/html" id="operations-template">
+
+  <div class="sequence-button-pad">
+    <div class="sequence-button" data-bind="css: { 'disabled-sequence-button': !dirty() }, click: save, visible: !readOnly()">SAVE</div>
+    <div class="sequence-button" data-bind="click: saveAs">SAVE AS</div>
+    <div class="sequence-button" data-bind="css: { 'disabled-sequence-button': !dirty() }, click: revert">REVERT</div>
+
+
+  <div class="sequence-button" data-bind="visible: readOnly()">
+  <label data-bind="css: { 'selected-sequence-button': activeTemplate() === 'statusLogs-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="click: getStatusLogs, checked: activeTemplate, checkedValue: 'statusLogs-template'"/>
+        STATUS LOGS
+      </label>
+  </div>
+ </div>
+
+   <div data-bind="visible: !readOnly()" class="run-buttons-container">
+    <div class="run-button" data-bind="css: { 'disabled-run-button': dirty() }, click: run">
+      <span class="run-button-text">RUN</span><div>&rtri;</div>
+    </div>
+    <div class="run-button" data-bind="css: { 'disabled-run-button': dirty() }, click: runFromSelected">
+      <span class="run-button-text">FROM SELECTED</span><div>&rtri;</div>
+    </div>
+  </div>
+
+    <div id="instructions-nav">
+      <div data-bind="event:{ click: viewInstructionOptions }">INSTRUCTIONS</div>
+  </div>
+
+  <!-- $root.sequencePage.firstRow  -->
+  <div data-bind="foreach: {data: optionRows, as: 'row'}">
+    <div class="action-container" data-bind="foreach: row">
+      <div data-bind="draggable: $root.dragDropManager.staticOptionsDrag, attr: { 'class': className() }">
+        <div data-bind="attr: {'class': imageClass() }"></div>
+        <span class="task-content" data-bind="text: name"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="controlpane">
+    <div id="controlinfo"></div>
+    <div data-bind="if: dragDropManager.selectedTaskExists()">
+      <p data-bind="template: { name: dragDropManager.selectedTask().templateName, data: dragDropManager.selectedTask() }"></p>
+    </div>
+  </div>
+</script>

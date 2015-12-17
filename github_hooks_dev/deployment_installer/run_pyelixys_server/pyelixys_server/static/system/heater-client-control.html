@@ -1,0 +1,20 @@
+<script type="text/html" id="heater-control-template">
+	<div class="heat-control-row">
+        <span class="heat-input-label" data-bind="text:name"></span>	
+		<numeric-input params="value: requestedTemp, min: 0, max: 50, maxlength: 3, step: 1, enable: canChangeHeat()"></numeric-input>
+		<div class="clear"></div>
+	</div>
+	<div class="heat-control-row">
+		<span class="heat-input-label">DURATION:</span>
+		<timer-input params="value: heatDuration,enable: canChangeHeat()"></timer-input>
+		<div class="clear"></div>
+	</div>
+	<div class="heat-control-row">
+		<div class="wireframe-button float-right" data-bind="visible:canChangeHeat(), click: on">
+			Start Heating
+		</div>
+		<div class="wireframe-button float-right" data-bind="visible:!canChangeHeat(), click: off">
+			Abort
+		</div>
+	</div>
+</script>

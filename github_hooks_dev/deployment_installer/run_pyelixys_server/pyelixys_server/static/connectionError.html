@@ -1,0 +1,24 @@
+<script type="text/html" id="connection-error-template">
+  <div data-bind="visible: visible()" class="connection-error-popup popup">
+    <div data-bind="visible: showConnectionErrorMessage()"
+      class="connection-error-box popup-box">
+      <div class="connection-error-text center-align-wrapper">
+        <div class="center-align-content">NETWORK CONNECTION LOST</div>
+      </div>
+      <div class="connection-error-buttons">
+        <button data-bind="click: retry">RETRY</button>
+        <button data-bind="click: refresh">REFRESH</button>
+      </div>
+    </div>
+    <div data-bind="visible: showRefreshMessage()"
+      class="connection-error-box popup-box">
+      <div class="connection-error-text center-align-wrapper">
+        <div class="center-align-content">UNSAVED DATA (IF ANY) WILL BE LOST... CONTINUE?</div>
+      </div>
+      <div class="connection-error-buttons">
+        <button data-bind="click: refreshOk">OK</button>
+        <button data-bind="click: refreshCancel">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</script>

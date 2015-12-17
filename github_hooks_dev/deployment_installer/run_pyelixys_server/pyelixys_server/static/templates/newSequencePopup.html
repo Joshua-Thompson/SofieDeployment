@@ -1,0 +1,19 @@
+<script type="text/html" id="new-sequence-popup-template">
+  <div>
+    <div data-bind="visible: visible()" class="new-sequence-popup popup">
+      <div class="new-sequence-box popup-box">
+        <div data-bind="click: close" class="popup-box-close-button">X</div>
+        <div class="new-sequence-title center-align-wrapper">
+          <div data-bind="text: titleText" class="center-align-content"></div>
+        </div>
+        <div class="new-sequence-box-fields">
+          <div class="new-sequence-box-text">Name</div>
+          <input data-bind="textInput: name" type="text" maxlength="64"/>
+          <div class="new-sequence-box-text">Description</div>
+          <input data-bind="textInput: description" type="text" maxlength="255"/>
+          <button data-bind="click: create, enable: enabled, text: buttonText" class="new-sequence-create-button"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
