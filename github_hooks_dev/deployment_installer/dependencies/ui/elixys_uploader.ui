@@ -153,7 +153,7 @@
      <x>0</x>
      <y>0</y>
      <width>636</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -171,6 +171,7 @@
     <addaction name="actionCalibration_Manager"/>
     <addaction name="actionState_Monitor"/>
     <addaction name="actionPyelixys_App"/>
+    <addaction name="actionStart_Simulator"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
@@ -184,6 +185,7 @@
     <string>Open Network</string>
    </property>
   </action>
+<<<<<<< HEAD
   <action name="actionCalibration_Manager">
    <property name="text">
     <string>Calibration Manager</string>
@@ -197,6 +199,9 @@
   <action name="actionPyelixys_App">
    <property name="text">
     <string>Pyelixys App</string>
+  <action name="actionStart_Simulator">
+   <property name="text">
+    <string>Start Simulator</string>
    </property>
   </action>
  </widget>

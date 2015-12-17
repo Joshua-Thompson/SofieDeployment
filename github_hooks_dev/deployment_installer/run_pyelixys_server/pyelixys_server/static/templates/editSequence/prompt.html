@@ -1,0 +1,30 @@
+<script type="text/html" id="prompt-template">
+<div class="operation-header">
+<div data-bind="text: order"></div>
+<span>PROMPT</span>
+</div>
+  <div id="promptfields" class="operation-container" data-bind="with: dataWithValidators">
+    <div class="duration" data-bind="css: !$parent.waitForUserToContinue() ? '' : 'unavailable'">
+      <span class="operation-field-header">DURATION</span>
+      <timer-input params="value: waitduration, min: 1, enable: !$parent.waitForUserToContinue()"></timer-input>
+      <br/>
+      <span>Prompt duration before continuing automatically</span>
+	  <hr class="operation-separator"/>
+	  </div>
+		  
+	  <div class="durationoverride">
+	     <label>
+		 <input type="checkbox" class="input_checkbox" data-bind="checked: $parent.waitForUserToContinue"/>
+              <span class="glyphicon needsclick" data-bind="css { 'glyphicon-ok': $parent.waitForUserToContinue }"></span>
+	     </label>
+		 <span>&nbsp;Wait for user to continue</span>
+	  </div>
+	  
+    <div class="message">
+      <span class="operation-field-header">MESSAGE</span>
+      <span class="operation-invalid" data-bind="visible: !message_valid()">*</span>
+      <br/>
+      <textarea class="operation-message" placeholder="Click to type" data-bind="textInput: message" rows="18"/>
+    </div>
+  </div>
+</script>

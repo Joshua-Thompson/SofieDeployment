@@ -1,0 +1,97 @@
+<script type="text/html" id="transfer-destination-popup-template">
+  <div id="transfer-edit-destination-popup">
+    <div class="destination" data-bind="with: Elixys.withDestination(destination, targetreactor, hplc.reagentpos)">
+      <input type="radio" id="transfer-destination-reactor-1" name="destination" class="radio-option"
+        data-bind="checked: destination, checkedValue: 'reactor0', enable: $parent.sourcereactor() !== 0,
+                   event: { change: function() { selectReactor(0); } }"/>
+      <label for="transfer-destination-reactor-1">Reactor 1</label>
+      
+      <input type="radio" id="transfer-destination-reactor-2" name="destination" class="radio-option"
+        data-bind="checked: destination, checkedValue: 'reactor1', enable: $parent.sourcereactor() !== 1,
+                   event: { change: function() { selectReactor(1); } }"/>
+      <label for="transfer-destination-reactor-2">Reactor 2</label>
+      
+      <input type="radio" id="transfer-destination-reactor-3" name="destination" class="radio-option"
+        data-bind="checked: destination, checkedValue: 'reactor2', enable: $parent.sourcereactor() !== 2,
+                   event: { change: function() { selectReactor(2); } }"/>
+      <label for="transfer-destination-reactor-3">Reactor 3</label>
+      
+      <input type="radio" id="transfer-destination-collection-vial" name="destination" class="radio-option"
+        data-bind="checked: destination, checkedValue: 'collection vial', event: { change: selectCollectionVial }"/>
+      <label for="transfer-destination-collection-vial">Collection Vial</label>
+
+
+      <input type="radio" id="transfer-destination-hplc" name="destination" class="radio-option"
+        data-bind="checked: destination, checkedValue: 'hplc', event: { change: selectHplc }"/>
+      <label for="transfer-destination-hplc">HPLC Loop</label>
+    </div>
+
+
+
+    <div class="hplc" data-bind="css { disabled: destination() !== 'hplc' }">
+      <div class="reagent" data-bind="with: Elixys.viewModels.editSequence.withReagent(hplc.reagentpos)">
+
+      <!--ko if: $parent.destination() === 'hplc'-->
+
+
+        <span class="operation-field-header"
+          data-bind="text: Elixys.truncate(name, 15), click: showReagentPopup"></span>
+        <span class="operation-reagent-position"
+          data-bind="visible: valid, click: showReagentPopup">
+
+      (CASSETTE
+        <!--ko text: cassette--><!--/ko-->
+          -
+         REAGENT
+      <!--ko text: reagent--><!--/ko-->
+       )
+
+        </span>
+        <span class="operation-invalid" data-bind="visible: !($parent.reagentpos_valid())">*</span>
+
+        <!--/ko-->
+        <!--ko if: $parent.destination() !== 'hplc'-->
+
+        <span class="operation-field-header">REAGENT</span>
+
+        <!--/ko-->
+
+        <br/>
+        <span>Position where the reagent is located</span>
+        <hr class="operation-separator"/>
+      </div>
+      <div class="reagentpath">
+        <span class="operation-field-header">REAGENT PATH</span>
+        <div class="operation-container">
+          <input type="radio" id="transfer-reagentpath-2" name="reagentpath" class="radio-option"
+            data-bind="checked: hplc.deliveryposition, checkedValue: 1, enable: destination() === 'hplc'"/>
+          <label for="transfer-reagentpath-2" class="operation-number">2</label>
+        </div>
+        <div class="operation-container">
+          <input type="radio" id="transfer-reagentpath-1" name="reagentpath" class="radio-option"
+            data-bind="checked: hplc.deliveryposition, checkedValue: 0, enable: destination() === 'hplc'"/>
+          <label for="transfer-reagentpath-1" class="operation-number">1</label>
+        </div>
+        <br/>
+        <span>Needle where reagent will be added</span>
+        <hr class="operation-separator"/>
+      </div>
+      <div class="pressure">
+        <span class="operation-field-header">PRESSURE</span>
+        <span class="operation-invalid" data-bind="visible: !deliverypressure_valid()">*</span>
+        <numeric-input params="value: hplc.deliverypressure, min: 0, max: 30, enable: destination() === 'hplc', maxlength: 2"></numeric-input>
+        <br/>
+        <span>Pressure to use when delivering reagent (PSI)</span>
+        <hr class="operation-separator"/>
+      </div>
+      <div class="duration">
+        <span class="operation-field-header">DURATION</span>
+        <span class="operation-invalid" data-bind="visible: !deliverytime_valid()">*</span>
+        <timer-input params="value: hplc.deliverytime, enable: destination() === 'hplc'"></timer-input>
+        <br/>
+        <span>Duration of delivery</span>
+      </div>
+    </div>
+
+  </div>
+</script>

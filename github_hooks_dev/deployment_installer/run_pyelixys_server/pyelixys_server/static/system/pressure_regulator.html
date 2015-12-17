@@ -1,0 +1,10 @@
+<script type="text/html" id="pressure-regulator-template">
+	<div class="pressure-cal-row">
+		<div class="row-number" data-bind="text: id + 1"></div>
+		<span class="current-pressure" data-bind="numericText: psi(), sigDigits: 2"></span>
+		<span class="small">psi</span>
+		<div class="adjust-container">
+			<numeric-input params="value: psiRequested, min: 0, max: maxPressure(), maxlength: 3, step: 1"></numeric-input>
+		</div>
+	</div>
+</script>

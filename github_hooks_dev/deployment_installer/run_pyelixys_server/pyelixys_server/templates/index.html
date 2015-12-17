@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Elixys</title>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
+    <!-- <meta name="viewport" content="width=960, height=700"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="static/bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <link href="static/style.css" type="text/css" media="all" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/datepicker.css">
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico" />
+
+    {% assets "js_all" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>          
+    {%endassets%}
+
+  </head>
+  <body>
+    <!-- VERY IMPORTANT
+         This div is where all the knockout templates get appended -->
+    <div id="templates"></div>
+    
+    <div id="status-bar" data-bind="css: { enable: isIOS }"></div>
+
+    <div id="content">
+      <div data-bind="visible: !isLoggedIn(), template: { name: 'login-template' }" id="login"></div>
+      <div data-bind="visible: isLoggedIn(), template: { name: 'sidebar' }" id="sidebar-navigation"></div>
+
+      <div data-bind="template: { name: 'connection-error-template' }" id="connection-error"></div>
+      <div data-bind="template: { name: 'notification-popup-template' }" id="notification-popup"></div>
+      <div data-bind="template: { name: 'new-sequence-popup-template' }" id="new-sequence-popup"></div>
+      <div data-bind="template: { name: 'import-sequence-popup-template' }" id="import-sequence-popup"></div>
+      <div data-bind="template: { name: 'templated-popup-template' }" id="templated-popup"></div>
+      <div data-bind="template: { name: 'reagent-popup-template' }" id="reagent-popup"></div>
+      <div data-bind="template: { name: 'two-button-popup-template' }" id="two-button-popup"></div>
+
+
+      <!-- using templates to avoid the flickering from items that are visible
+           before knockout applies bindings-->
+
+
+      <!-- logged in content -->
+      <div data-bind="visible: visible(), template: { name: 'sequences-template' }" id="sequences" class="template-content"></div>
+      <div data-bind="visible: visible(), template: { name: 'edit-sequence-template' }" id="edit-sequence" class="template-content"></div>
+      <div data-bind="visible: visible(), template: { name: 'logs-template' }" id="logs" class="template-content"></div>
+      <div data-bind="visible: visible(), template: { name: 'running-template' }" id="running" class="template-content"></div>
+      <div data-bind="visible: visible(), template: { name: 'pre-run-checklist-template' }" id="pre-run-checklist"></div>
+      <div data-bind="visible: visible(), template: { name: 'system-template' }" id="system" class="template-content"></div>
+      <div data-bind="visible: visible(), template: { name: 'elixys-manual-template' }" id="elixys-manual" ></div>
+    </div>
+
+
+    </body>
+</html>

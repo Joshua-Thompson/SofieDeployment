@@ -1,0 +1,11 @@
+<script type="text/html" id="templated-popup-template">
+  <!--ko if: visible-->
+  <div class="templated-popup popup">
+    <div data-bind="attr: { class: 'popup-box ' + extraClass() }">
+      <div data-bind="click: close" class="popup-box-close-button">X</div>
+      <div class="templated-popup-content" data-bind="template: templateAndData"></div>
+	  <button data-bind="click: close" class="popup-close-footer-button">OK</button>
+    </div>
+  </div>
+  <!--/ko-->
+</script>

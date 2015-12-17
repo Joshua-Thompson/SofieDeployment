@@ -1,0 +1,16 @@
+<script type="text/html" id="login-template">
+  <!-- login header --->
+  <div id="loginheader">
+    <div class="sofieheader"><img src="static/logos/SOFIEBIOSCIENCES-logo.png" class="sofieLogo"/><br/>
+    <span class="version-numbers">Version: <!-- ko text: elixysVersion --><!--/ko--></span></div>
+    <div ><img src="static/logos/Elixys-UI-logo.png" class="elixysLoginHeader"/></div>
+  </div>
+  <div class="login-positioner"></div>
+  <!-- login body -->
+  <div id="loginform">
+    <button data-bind="click: logIn" id="login-button" >SIGN IN</button>
+    <button data-bind="click: update_software, visible: softwareUpdateAvailable(), text: updateComplete() ? 'UPDATE' : 'UPDATING...'" id="update-button"></button>
+  </div>
+
+
+</script>

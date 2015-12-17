@@ -7,6 +7,7 @@ import PyQt5.QtCore as QtCore
 import updater
 import version
 from logger import logger, hdlr
+import threading
 from qt_threads.authenticator import Authenticator
 from qt_threads.copierthread import CopierThread
 from qt_threads.monitorappisup import MonitorAppIsUp
@@ -63,11 +64,17 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.action_elixys_app.triggered.connect(self.open_elixys_app)
         self.action_state_monitor.triggered.connect(self.open_state_monitor)
         self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
+        self.action_start_simulator = self.findChild(QtWidgets.QAction, "actionStart_Simulator")
+        self.action_start_simulator.triggered.connect(self.run_sim)
         self.action_connection.triggered.connect(self.open_settings)
         self.action_show_network.triggered.connect(self.open_network)
 
     def open_settings(self):
         self.settings.show()
+
+    def run_sim(self):
+        t = threading.Thread(target=os.system, args=("run_pyelixys_server\\run_pyelixys_server.exe sim",))
+        t.start()
 
     def open_network(self):
         self.network_browser = ElixysBrowser()

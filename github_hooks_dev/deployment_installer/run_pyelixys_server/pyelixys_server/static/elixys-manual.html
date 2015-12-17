@@ -1,0 +1,10 @@
+<script type="text/html" id="elixys-manual-template">
+    <div id="elixys-manual-section" class="mainpane" data-bind="sidebarToggle: isSidebarVisible()">
+        <div class="manual-container">
+            <div style="padding-top: 10px;padding-left: 20px;font-size: 25px;">
+                <a href="#" data-bind="click: returnToSequence,visible:canReturnToSequence()">Back To Sequence</a>
+            </div>
+            <iframe id="manual-pdf" data-bind="attr:{ width: width }" height="100%"></iframe>
+        </div>
+    </div>
+</script>

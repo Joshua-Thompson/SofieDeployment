@@ -1,0 +1,29 @@
+<script type="text/html" id="statusLogs-template">
+      <div id="statusLogs-list-content">
+
+      <div id="statusLogs-header" class="indent">
+        <div class="operation-status-message">Status Message</div>
+        <div class="operation-status-type">Operation</div>
+        <div class="operation-order">Order</div>
+        <div class="operation-time">Time</div>
+      </div>
+      <div id="statusLogs-list-pane" class="indent">
+        <div data-bind="foreach: statusLogs" id="logs-list">
+          <div class="statusLogs-row">
+            <div>
+              <div data-bind="text: Elixys.truncate(operation_status.message, 100)" class="statusLogs-name"></div>
+            </div>
+            <div>
+              <div data-bind="text: operation_status.operation" class="logs-text-operation"></div>
+            </div>
+            <div>
+              <div class="operation-order" data-bind="text: operation_status.order"></div>
+            </div>
+            <div>
+              <div data-bind="text: operation_status.time" class="logs-text date"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+	  </div>
+</script>

@@ -1,0 +1,60 @@
+<script type="text/html" id="evaporate-parameters-popup-template">
+  <div id="evaporate-parameters-popup">
+    <span class="title">EVAPORATE parameters:</span>
+    <div class="parameter-fields-container">
+      <ul data-bind="with: data">
+        <li>
+            <span>Reactor</span>
+            <span data-bind="text: reactor() + 1"></span>
+        </li>
+        <li>
+            <span>Pressure</span>
+            <span><!--ko text: evaporationpressure --><!--/ko--><span class="parameter-small">&nbsp;psi</span>
+			</span>
+        </li>
+        <li>
+            <span>Temp</span>
+            <span><!--ko text: evaporationtemperature --><!--/ko--><span class="parameter-small">&nbsp;C</span>
+			</span>
+        </li>
+        <li>
+            <span>Stir</span>
+            <span><!--ko text: stirspeed --><!--/ko--><span class="parameter-small">&nbsp;rpm</span>
+			</span>
+        </li>
+        <li>
+            <span>Duration</span>
+            <span><!--ko text: evaporationduration() --><!--/ko--><span class="parameter-small">&nbsp;sec</span>
+			</span>
+        </li>
+        <li>
+            <span>Stir delay</span>
+            <span><!--ko text: stirdelay --><!--/ko--><span class="parameter-small">&nbsp;sec</span>
+			</span>
+        </li>
+        <li>
+            <span>Cool to temp</span>
+            <span><!--ko text: finaltemperature --><!--/ko--><span class="parameter-small">&nbsp;C</span>
+			</span>
+        </li>
+        <li>
+            <span>Stir duration</span>
+            <span><!--ko text: durationofstir --><!--/ko--><span class="parameter-small">&nbsp;sec</span>
+			</span>
+        </li>
+        <li>
+            <span>Message</span>
+            <span><!--ko text: message --><!--/ko-->
+			&nbsp;</span>
+        </li>
+      </ul>
+	  </div>
+	  <div class="save-note-container">
+	  <span>Save a note about this operation:</span>
+      <textarea placeholder="Click to type a note" data-bind="textInput: $parent.run_note" rows="10" maxlength="1024"/>
+	  </div>
+	  <div class="save-note-button">
+      <input type="button" class="save-note-button" value="Save" data-bind="click: $parent.save_message"/>
+    </div>
+  </div>
+</script>

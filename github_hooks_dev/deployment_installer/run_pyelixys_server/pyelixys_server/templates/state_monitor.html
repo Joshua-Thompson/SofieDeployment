@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elixys State Monitor</title>
+    <script type=text/javascript src="{{url_for('static', filename='javascript/lib/jquery.min.js') }}"></script>
+
+
+    <script>
+
+
+        function generateTables(response) {
+
+               var status_message = response.get_state_monitor;
+               var status = status_message.Status;
+               var headers = status_message.Header;
+
+                //check for table
+                var status_div = document.getElementById("state-monitor");
+                var state_table = document.getElementById("state-table");
+
+                //make state monitor table if not already made
+                if(state_table == null){
+                var state_table = document.createElement("TABLE");
+                state_table.setAttribute("id","state-table");
+                document.body.appendChild(state_table);
+
+                //make table header row
+                var header_table_tr = document.createElement("TR");
+                header_table_tr.setAttribute("id","header-table-tr");
+                state_table.appendChild(header_table_tr);
+                }
+
+               //make headers
+               for(var index in headers){
+                    var header_name = headers[index];
+                    var header_th = document.getElementById(header_name+"-header");
+
+                    if(header_th == null)
+                        {
+                            var header_th = document.createElement("TH");
+                            header_th.setAttribute("id",header_name+"-header");
+                            header_table_tr.appendChild(header_th);
+                            header_th.innerHTML = header_name;
+                        }
+               }
+
+               //populate status
+               for(var subsystem in status){
+
+                //headers for ... Heaters, DigitalInputs...et
+                var subsystem_tr = document.getElementById(subsystem);
+                if(subsystem_tr==null){
+                    var subsystem_tr = document.createElement("TR");
+                    subsystem_tr.setAttribute("id",subsystem);
+                    state_table.appendChild(subsystem_tr);
+                    //subsystem header
+                    var subsystem_th = document.createElement("TH");
+                    subsystem_th.setAttribute("class","subsystem-header");
+                    subsystem_tr.appendChild(subsystem_th);
+                    subsystem_th.innerHTML = subsystem;
+                }
+
+                    //make new row of each subsystem (ex: Heater0, Heater1...etc)
+                  for(var id in status[subsystem]){
+                        var new_status_tr = document.getElementById(subsystem+id);
+
+                        //if first time make row elements
+                        if(new_status_tr==null){
+                            var new_status_tr = document.createElement("TR");
+                            new_status_tr.setAttribute("id",subsystem+id);
+                            state_table.appendChild(new_status_tr);
+
+                            //make id column/td
+                            var new_id_td = document.createElement("TD");
+                            new_id_td.setAttribute("id",subsystem+id+"-id");
+                            new_status_tr.appendChild(new_id_td);
+                            //fill id column, but not other column ... yet
+                            new_id_td.innerHTML = id;
+
+                            //make name column
+                            var new_name_td = document.createElement("TD");
+                            new_name_td.setAttribute("id",subsystem+id+"-name");
+                            new_status_tr.appendChild(new_name_td);
+
+                            //make value column
+                            var new_value_td = document.createElement("TD");
+                            new_value_td.setAttribute("id",subsystem+id+"-value");
+                            new_status_tr.appendChild(new_value_td);
+
+                            //make units column
+                            var new_units_td = document.createElement("TD");
+                            new_units_td.setAttribute("id",subsystem+id+"-units");
+                            new_status_tr.appendChild(new_units_td);
+
+                            //make error column
+                            var new_error_td = document.createElement("TD");
+                            new_error_td.setAttribute("id",subsystem+id+"-error");
+                            new_status_tr.appendChild(new_error_td);
+
+                            }
+
+                         //populate each status element after making columns (ex: value, error...etc)
+                         for(var value_name in status[subsystem][id])
+                          {
+                            if(value_name!='id'){
+                                var param_td = document.getElementById(subsystem+id + "-" + value_name);
+                                if(param_td){
+                                    param_td.innerHTML = status[subsystem][id][value_name];
+                                }
+                            }
+                          }
+
+                    }
+
+                  }
+
+            };
+
+ 
+        function api_call() {
+                    var request = {"request":"get_state_monitor","request_data":{"get_state_monitor":{}}};
+
+                    var request_handler = request.request;
+                    var request_data = JSON.stringify(request.request_data);
+
+
+
+                    $.post(request_handler,request_data,function(result)
+                           {
+                               var server_response = result;
+                               generateTables(server_response);
+                            },'json');
+                           };
+
+        function onLoad(){
+        setInterval(api_call, 1000);
+        };
+    </script>
+
+    <style>
+    table {
+        width: 70%;
+        }
+
+    td {
+    text-align: left;
+    padding-right:30px;
+    }
+
+    th {
+    text-align: left;
+    font-family: italic;
+    }
+
+    th.subsystem-header {
+    text-align: center;
+    font-style: italic;
+        }
+    H3 {
+        color: #3153CF;
+        }
+
+    </style>
+
+</head>
+<body onload="onLoad();">
+<h3>Elixys System Status</h3>
+<div id="state_monitor"></div>
+<div id="message"></div>
+
+
+</body>
+</html>

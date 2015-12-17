@@ -1,0 +1,10 @@
+<div class="operation-adjust-container">
+  <input type="button" class="operation-upbutton" value=""
+    data-bind="enable: canIncrement, click: increment"/>
+  <input type="button" class="operation-downbutton" value=""
+    data-bind="enable: canDecrement, click: decrement"/>
+</div>
+<div>
+  <input type="text" class="operation-number-input" data-bind="valueUpdate:
+  'keyup', textInput: input, enable: enable, attr: { maxlength: maxlength }"/>
+</div>

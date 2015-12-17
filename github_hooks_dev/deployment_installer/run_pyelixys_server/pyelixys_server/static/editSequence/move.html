@@ -1,0 +1,44 @@
+<script type="text/html" id="move-template">
+<div class="operation-header">
+<div data-bind="text: order"></div>
+<span>MOVE REACTOR</span>
+</div>
+  <div id="movefields" class="operation-container" data-bind="with: dataWithValidators">
+    <div class="reactor">
+      <span class="operation-field-header">REACTOR</span>
+      <span class="operation-invalid" data-bind="visible: !reactor_valid()">*</span>
+      <div>
+        <input type="radio" id="move-reactor-3" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 2"/>
+        <label for="move-reactor-3" class="operation-number">3</label>
+      </div>
+      <div>
+        <input type="radio" id="move-reactor-2" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 1"/>
+        <label for="move-reactor-2" class="operation-number">2</label>
+      </div>
+      <div>
+        <input type="radio" id="move-reactor-1" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 0"/>
+        <label for="move-reactor-1" class="operation-number">1</label>
+      </div>
+      <br/>
+      <span>Reactor where the reagent will be mixed</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="position">
+      <span class="operation-field-header">POSITION</span>
+      <span class="operation-invalid" data-bind="visible: !position_valid()">*</span>
+      <div>
+        <div class="operation-text clickable" data-bind="text: position,
+          click: function() { Elixys.showTemplatedPopup('move-position-popup-template', $parent.data, 'move-edit-position'); }"></div>
+      </div>
+      <br/>
+      <span>Click to select</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="message">
+      <span class="operation-field-header">MESSAGE</span>
+      <span class="operation-invalid" data-bind="visible: !message_valid()">*</span>
+      <br/>
+      <textarea class="operation-message" placeholder="Click to type" data-bind="textInput: message" rows="18"/>
+    </div>
+  </div>
+</script>

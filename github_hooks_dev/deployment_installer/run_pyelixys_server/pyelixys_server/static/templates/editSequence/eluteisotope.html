@@ -1,0 +1,64 @@
+<script type="text/html" id="eluteisotope-template">
+<div class="operation-header">
+<div data-bind="text: order"></div>
+<span>ELUTE ISOTOPE</span>
+</div>
+  <div id="eluteisotopefields" class="operation-container" data-bind="with: dataWithValidators">
+    <form>
+	  <div class="reactor">
+	    <span class="operation-field-header">REACTOR</span>
+      <span class="operation-invalid" data-bind="visible: !reactor_valid()">*</span>
+      <div>
+        <input type="radio" id="eluteisotope-reactor-3" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 2"/>
+        <label for="eluteisotope-reactor-3" class="operation-number">3</label>
+      </div>
+      <div>
+        <input type="radio" id="eluteisotope-reactor-2" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 1"/>
+        <label for="eluteisotope-reactor-2" class="operation-number">2</label>
+      </div>
+      <div>
+        <input type="radio" id="eluteisotope-reactor-1" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 0"/>
+        <label for="eluteisotope-reactor-1" class="operation-number">1</label>
+      </div>
+      <br/>
+      <span>Reactor where the reagent will be added</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="reagent" data-bind="with: $parent.withReagent(reagentpos,$parent)">
+      <span class="operation-field-header"
+        data-bind="text: Elixys.truncate(name, 18), click: showReagentPopup"></span>
+      <span class="operation-reagent-position"
+        data-bind="visible: valid, click: showReagentPopup">
+        (CASSETTE <!--ko text: cassette--><!--/ko-->
+        -
+        REAGENT <!--ko text: reagent--><!--/ko-->)
+      </span>
+      <span class="operation-invalid" data-bind="visible: !($parent.reagentpos_valid())">*</span>
+      <br/>
+      <span>Name of reagent vial containing eluent</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="duration">
+      <span class="operation-field-header">DURATION</span>
+      <span class="operation-invalid" data-bind="visible: !elutetime_valid()">*</span>
+      <timer-input params="value: elutetime"></timer-input>
+      <br/>
+      <span>How long to apply pressure</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="pressure">
+      <span class="operation-field-header">PRESSURE</span>
+      <span class="operation-invalid" data-bind="visible: !elutepressure_valid()">*</span>
+      <numeric-input params="value: elutepressure, min: 0, max: 30, maxlength: 3"></numeric-input>
+      <br/>
+      <span>Pressure to use while eluteing on cartidge (PSI)</span>
+    </div>
+    <div class="message">
+      <span class="operation-field-header">MESSAGE</span>
+      <span class="operation-invalid" data-bind="visible: !message_valid()">*</span>
+      <br/>
+      <textarea class="operation-message" placeholder="Click to type" data-bind="textInput: message" rows="18"/>
+	  </div>
+    </form>
+  </div>
+</script>

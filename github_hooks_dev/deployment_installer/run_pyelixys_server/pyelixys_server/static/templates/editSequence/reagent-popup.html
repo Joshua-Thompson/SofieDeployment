@@ -1,0 +1,72 @@
+<script type="text/html" id="reagent-popup-template">
+  <div data-bind="visible: visible()" class="reagent-popup popup">
+    <div class="popup-box">
+      <div data-bind="click: close" class="popup-box-close-button">X</div>
+      <div class="sequence-button-pad">
+        <label class="sequence-button" data-bind="css: { 'selected-sequence-button': currentCassette() === 0 }">
+          <input type="radio" name="cassette" class="radio-option" data-bind="checked: currentCassette, checkedValue: 0"/>
+          CASSETTE 1
+        </label>
+        <label class="sequence-button" data-bind="css: { 'selected-sequence-button': currentCassette() === 1 }">
+          <input type="radio" name="cassette" class="radio-option" data-bind="checked: currentCassette, checkedValue: 1"/>
+          CASSETTE 2
+        </label>
+        <label class="sequence-button" data-bind="css: { 'selected-sequence-button': currentCassette() === 2 }">
+          <input type="radio" name="cassette" class="radio-option" data-bind="checked: currentCassette, checkedValue: 2"/>
+          CASSETTE 3
+        </label>
+      </div>
+      <div>
+	  
+        <div data-bind="with: cassettes()[currentCassette()]" class="cassette-details cf">
+          <div class="cassette-details-left">
+            <div class="reagent-name reagent-name1" data-bind="text: Elixys.truncate(reagents[0].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[0 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-button': $parent.selectedReagents()[0 + $parent.currentCassette()*12].selected || !reagents[0].name().trimRight().length}, click: function() { $parent.select(0); }"></div>
+			<div class="reagent-name reagent-name4" data-bind="text: Elixys.truncate(reagents[3].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[3 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[3 + $parent.currentCassette()*12].selected || !reagents[3].name().trimRight().length}, click: function() { $parent.select(3); }"></div>
+			<div class="reagent-name reagent-name6" data-bind="text: Elixys.truncate(reagents[5].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[5 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[5 + $parent.currentCassette()*12].selected || !reagents[5].name().trimRight().length }, click: function() { $parent.select(5); }"></div>
+			<div class="reagent-name reagent-name8" data-bind="text: Elixys.truncate(reagents[7].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[7 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[7 + $parent.currentCassette()*12].selected || !reagents[7].name().trimRight().length}, click: function() { $parent.select(7); }"></div>
+			<div class="reagent-name reagent-name10" data-bind="text: Elixys.truncate(reagents[9].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[9 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[9 + $parent.currentCassette()*12].selected || !reagents[9].name().trimRight().length }, click: function() { $parent.select(9); }"></div>
+			<div class="reagent-name reagent-name11" data-bind="text: Elixys.truncate(reagents[10].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[10 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[10 + $parent.currentCassette()*12].selected || !reagents[10].name().trimRight().length}, click: function() { $parent.select(10); }"></div>
+          </div>
+          <div class="reagent-circles">
+            <div class="reagent-circle-row cf">
+              <div class="reagent-circle reagent-circle-left reagent-circle1" data-bind=" css: {'current-reagent-circle': $parent.selectedReagents()[0 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[0 + $parent.currentCassette()*12].selected || !reagents[0].name().trimRight().length }">1</div>
+              <div class="reagent-circle reagent-circle2" data-bind="css: { 'current-reagent-circle': $parent.selectedReagents()[1 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[1 + $parent.currentCassette()*12].selected || !reagents[1].name().trimRight().length}">2</div>
+              <div class="reagent-circle reagent-circle-right reagent-circle3" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[2 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[2 + $parent.currentCassette()*12].selected || !reagents[2].name().trimRight().length }">3</div>
+            </div>
+            <div class="reagent-circle-row cf">
+              <div class="reagent-circle reagent-circle-left reagent-circle4" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[3 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[3 + $parent.currentCassette()*12].selected || !reagents[3].name().trimRight().length}">4</div>
+              <div class="reagent-circle-empty-slot"></div>
+              <div class="reagent-circle reagent-circle-right reagent-circle5" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[4 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[4 + $parent.currentCassette()*12].selected || !reagents[4].name().trimRight().length}">5</div>
+            </div>
+            <div class="reagent-circle-row cf">
+              <div class="reagent-circle reagent-circle-left reagent-circle6" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[5 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[5 + $parent.currentCassette()*12].selected || !reagents[5].name().trimRight().length}">6</div>
+              <div class="reagent-circle-label-slot" data-bind="text: $parent.currentCassette() + 1"></div>
+              <div class="reagent-circle reagent-circle-right reagent-circle7" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[6 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[6 + $parent.currentCassette()*12].selected || !reagents[6].name().trimRight().length }">7</div>
+            </div>
+            <div class="reagent-circle-row cf">
+              <div class="reagent-circle reagent-circle-left reagent-circle8" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[7 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[7 + $parent.currentCassette()*12].selected || !reagents[7].name().trimRight().length}">8</div>
+              <div class="reagent-circle-empty-slot"></div>
+              <div class="reagent-circle reagent-circle-right reagent-circle9" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[8 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[8 + $parent.currentCassette()*12].selected || !reagents[8].name().trimRight().length}">9</div>
+            </div>
+            <div class="reagent-circle-row cf">
+              <div class="reagent-circle reagent-circle-left reagent-circle10" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[9 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[9 + $parent.currentCassette()*12].selected || !reagents[9].name().trimRight().length}">10</div>
+              <div class="reagent-circle reagent-circle11" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[10 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[10 + $parent.currentCassette()*12].selected || !reagents[10].name().trimRight().length}">11</div>
+              <div class="reagent-circle reagent-circle-right reagent-circle12" data-bind="css: {'current-reagent-circle': $parent.selectedReagents()[11 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-circle': $parent.selectedReagents()[11 + $parent.currentCassette()*12].selected || !reagents[11].name().trimRight().length}">12</div>
+            </div>
+          </div>
+          <div class="cassette-details-right">
+            <div class="reagent-name reagent-name2" data-bind="text: Elixys.truncate(reagents[1].name,25), css: {'current-reagent-button': $parent.selectedReagents()[1 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-button': $parent.selectedReagents()[1 + $parent.currentCassette()*12].selected || !reagents[1].name().trimRight().length }, click: function() { $parent.select(1); }"></div>
+			<div class="reagent-name reagent-name3" data-bind="text: Elixys.truncate(reagents[2].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[2 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[2 + $parent.currentCassette()*12].selected || !reagents[2].name().trimRight().length}, click: function() { $parent.select(2); }"></div>
+			<div class="reagent-name reagent-name5" data-bind="text: Elixys.truncate(reagents[4].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[4 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[4 + $parent.currentCassette()*12].selected || !reagents[4].name().trimRight().length}, click: function() { $parent.select(4); }"></div>
+			<div class="reagent-name reagent-name7" data-bind="text: Elixys.truncate(reagents[6].name,25), css: {'current-reagent-button': $parent.selectedReagents()[6 + $parent.currentCassette()*12].task === $parent.current_task(), 'disabled-reagent-button': $parent.selectedReagents()[6 + $parent.currentCassette()*12].selected || !reagents[6].name().trimRight().length}, click: function() { $parent.select(6); }"></div>
+			<div class="reagent-name reagent-name9" data-bind="text: Elixys.truncate(reagents[8].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[8 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[8 + $parent.currentCassette()*12].selected || !reagents[8].name().trimRight().length}, click: function() { $parent.select(8); }"></div>
+			<div class="reagent-name reagent-name12" data-bind="text: Elixys.truncate(reagents[11].name,25), css: { 'current-reagent-button': $parent.selectedReagents()[11 + $parent.currentCassette()*12].task === $parent.current_task(),'disabled-reagent-button': $parent.selectedReagents()[11 + $parent.currentCassette()*12].selected || !reagents[11].name().trimRight().length}, click: function() { $parent.select(11); }"></div>
+          </div>
+        </div>
+      </div>
+	  	  <div class="full-reagent-name" data-bind="text: cassettes()[currentCassette()] !== undefined && currentCassetteReagent()!== -1 ? cassettes()[currentCassette()].reagents[currentCassetteReagent()].name: ''">
+          </div>
+		  <button data-bind="click: close" class="popup-close-footer-button">OK</button>
+    </div>
+  </div>
+</script>

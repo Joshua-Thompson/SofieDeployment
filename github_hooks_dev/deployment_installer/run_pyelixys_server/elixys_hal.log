@@ -1,0 +1,34 @@
+2015-12-17 11:38:50,994 - elixys.hal - DEBUG - Initializing SynthesizerHAL
+2015-12-17 11:38:51,000 - elixys.hal - DEBUG - Starting the Websocket communication process
+2015-12-17 11:38:51,273 - elixys.hal - DEBUG - Set Temperature Controller 0 setpoint -> 25.000000
+2015-12-17 11:38:51,279 - elixys.hal - DEBUG - Set Temperature Controller 1 setpoint -> 25.000000
+2015-12-17 11:38:51,282 - elixys.hal - DEBUG - Set Temperature Controller 2 setpoint -> 25.000000
+2015-12-17 11:38:51,286 - elixys.hal - DEBUG - Set Temperature Controller 0 on -> False
+2015-12-17 11:38:51,289 - elixys.hal - DEBUG - Set Temperature Controller 1 on -> False
+2015-12-17 11:38:51,292 - elixys.hal - DEBUG - Set Temperature Controller 2 on -> False
+2015-12-17 11:38:51,296 - elixys.hal - DEBUG - Gateway start
+2015-12-17 11:38:51,299 - elixys.hal - DEBUG - Set Actuator 2 reset
+2015-12-17 11:38:51,572 - elixys.hal - DEBUG - Set Temperature Controller 3 setpoint -> 25.000000
+2015-12-17 11:38:51,575 - elixys.hal - DEBUG - Set Temperature Controller 4 setpoint -> 25.000000
+2015-12-17 11:38:51,578 - elixys.hal - DEBUG - Set Temperature Controller 5 setpoint -> 25.000000
+2015-12-17 11:38:51,584 - elixys.hal - DEBUG - Set Temperature Controller 3 on -> False
+2015-12-17 11:38:51,585 - elixys.hal - DEBUG - Set Temperature Controller 4 on -> False
+2015-12-17 11:38:51,588 - elixys.hal - DEBUG - Set Temperature Controller 5 on -> False
+2015-12-17 11:38:51,592 - elixys.hal - DEBUG - Gateway start
+2015-12-17 11:38:51,595 - elixys.hal - DEBUG - Set Actuator 3 reset
+2015-12-17 11:38:51,865 - elixys.hal - DEBUG - Set Temperature Controller 6 setpoint -> 25.000000
+2015-12-17 11:38:51,875 - elixys.hal - DEBUG - Set Temperature Controller 7 setpoint -> 25.000000
+2015-12-17 11:38:51,878 - elixys.hal - DEBUG - Set Temperature Controller 8 setpoint -> 25.000000
+2015-12-17 11:38:51,884 - elixys.hal - DEBUG - Set Temperature Controller 6 on -> False
+2015-12-17 11:38:51,888 - elixys.hal - DEBUG - Set Temperature Controller 7 on -> False
+2015-12-17 11:38:51,890 - elixys.hal - DEBUG - Set Temperature Controller 8 on -> False
+2015-12-17 11:38:51,892 - elixys.hal - DEBUG - Gateway start
+2015-12-17 11:38:51,895 - elixys.hal - DEBUG - Set Actuator 4 reset
+2015-12-17 11:38:52,457 - elixys.hal - DEBUG - Gateway start
+2015-12-17 11:38:52,459 - elixys.hal - DEBUG - Set Actuator 0 reset
+2015-12-17 11:38:52,461 - elixys.hal - DEBUG - Gateway start
+2015-12-17 11:38:52,463 - elixys.hal - DEBUG - Set Actuator 1 reset
+2015-12-17 11:38:53,003 - elixys.hal - INFO - Starting the HW Simulator
+2015-12-17 11:38:53,023 - elixys.hal - INFO - starting flask
+2015-12-17 11:38:53,029 - elixys.hal - INFO - importing ass
+2015-12-17 11:38:53,029 - elixys.hal - INFO - Imported

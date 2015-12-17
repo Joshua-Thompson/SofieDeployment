@@ -1,0 +1,65 @@
+<script type="text/html" id="trapisotope-template">
+<div class="operation-header">
+<div data-bind="text: order"></div>
+<span>TRAP ISOTOPE</span>
+</div>
+  <div id="trapisotopefields" class="operation-container" data-bind="with: dataWithValidators">
+    <form>
+	  <div class="reactor">
+	    <span class="operation-field-header">REACTOR</span>
+      <span class="operation-invalid" data-bind="visible: !reactor_valid()">*</span>
+      <div>
+        <input type="radio" id="trapisotope-reactor-3" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 2"/>
+        <label for="trapisotope-reactor-3" class="operation-number">3</label>
+      </div>
+      <div>
+        <input type="radio" id="trapisotope-reactor-2" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 1"/>
+        <label for="trapisotope-reactor-2" class="operation-number">2</label>
+      </div>
+      <div>
+        <input type="radio" id="trapisotope-reactor-1" name="reactor" class="radio-option" data-bind="checked: reactor, checkedValue: 0"/>
+        <label for="trapisotope-reactor-1" class="operation-number">1</label>
+      </div>
+      <br/>
+      <span>Reactor where the reagent will be added</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="activitysource">
+      <span class="operation-field-header">ACTIVITY SOURCE</span>
+      <span class="operation-invalid" data-bind="visible: !activitysource_valid()">*</span>
+      <div>
+        <input type="radio" id="trapisotope-activitysource-ext" name="activitysource" value="external" class="radio-option" data-bind="checked: activitysource"/>
+        <label class="trap-source" for="trapisotope-activitysource-ext">CYCLOTRON</label>
+      </div>
+      <div>
+        <input type="radio" id="trapisotope-activitysource-int" name="activitysource" value="internal" class="radio-option" data-bind="checked: activitysource"/>
+        <label class="trap-source" for="trapisotope-activitysource-int">VIAL</label>
+      </div>
+      <br/>
+      <span>Source of pressure to load isotope</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="pressure" data-bind="style: { color: activitysource() === 'internal' ? '#444E58' : '#D7D9DC' }">
+      <span class="operation-field-header">PRESSURE</span>
+      <span class="operation-invalid" data-bind="visible: !trappressure_valid()">*</span>
+      <numeric-input params="value: trappressure, min: 0, max: 30, enable: activitysource() === 'internal', maxlength: 3"></numeric-input>
+      <br/>
+      <span>Pressure to use while trapping on cartidge (PSI)</span>
+      <hr class="operation-separator"/>
+    </div>
+    <div class="duration" data-bind="style: { color: activitysource() === 'internal' ? '#444E58' : '#D7D9DC' }">
+      <span class="operation-field-header">DURATION</span>
+      <span class="operation-invalid" data-bind="visible: !traptime_valid()">*</span>
+      <timer-input params="value: traptime, enable: activitysource() === 'internal'"></timer-input>
+      <br/>
+      <span>How long to apply pressure</span>
+    </div>
+    <div class="message">
+      <span class="operation-field-header">MESSAGE</span>
+      <span class="operation-invalid" data-bind="visible: !message_valid()">*</span>
+      <br/>
+      <textarea class="operation-message" placeholder="Click to type" data-bind="textInput: message" rows="18"/>
+	  </div>
+    </form>
+  </div>
+</script>

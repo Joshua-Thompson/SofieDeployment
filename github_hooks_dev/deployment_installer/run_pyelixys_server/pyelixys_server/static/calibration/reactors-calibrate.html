@@ -1,0 +1,38 @@
+<script type="text/html" id="reactorscalibrate-template">	
+<div class="calibrate-reactor-buttons">
+	  <label class="sequence-button" data-bind="css: { 'selected-sequence-button': parseInt(reactorCalibrations.reactorToCalIndex()) === 0 }">
+        <input type="radio" name="reactor-calibration" class="radio-option" value="0" data-bind="checked: reactorCalibrations.reactorToCalIndex"/>
+        REACTOR 1
+      </label>
+      
+	  <label class="sequence-button" data-bind="css: { 'selected-sequence-button': parseInt(reactorCalibrations.reactorToCalIndex()) === 1 }">
+        <input type="radio" name="reactor-calibration" class="radio-option" value="1" data-bind="checked: reactorCalibrations.reactorToCalIndex"/>
+        REACTOR 2
+      </label>
+	  
+	  <label class="sequence-button" data-bind="css: { 'selected-sequence-button': parseInt(reactorCalibrations.reactorToCalIndex()) === 2 }">
+        <input type="radio" name="reactor-calibration" class="radio-option" value="2" data-bind="checked: reactorCalibrations.reactorToCalIndex"/>
+        REACTOR 3
+      </label>
+</div>
+
+<div class="calibrate-section reactor-robot">
+	<span class="calibration-header" data-bind="text: 'REACTOR ROBOT ' + (parseInt(reactorCalibrations.reactorToCalIndex())+1)"></span>
+	  <!-- Reactor positions -->
+
+	<div data-bind="template: { name: 'reactor-template', data: reactorCalibrations.reactorToCal}"></div>
+</div>
+
+<div class="calibrate-section stopcocks">	  
+	  <!-- stopcocks -->
+	<div>
+			<div data-bind="template: { name: 'stopcock-template', data: reactorCalibrations.reactorToCal().stopcocks[0]}"></div>
+			<div class="top-margin-60" data-bind="template: { name: 'stopcock-template', data: reactorCalibrations.reactorToCal().stopcocks[1]}"></div>
+			<div class="top-margin-60" data-bind="template: { name: 'stopcock-template', data: reactorCalibrations.reactorToCal().stopcocks[2]}"></div>
+	</div>
+</div>
+
+<div class="calibrate-section mixers">
+	<div data-bind="template: { name: 'mixer-template', data: reactorCalibrations.reactorToCal().mixer}"></div>
+</div>
+</script>

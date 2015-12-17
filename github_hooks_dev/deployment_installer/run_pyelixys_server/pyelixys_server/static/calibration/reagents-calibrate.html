@@ -1,0 +1,68 @@
+<script type="text/html" id="reagentscalibrate-template">	
+
+<div class="calibrate-reactor-buttons">
+	<label class="sequence-button" data-bind="css: { 'selected-sequence-button': parseInt(cassetteCalibrations.selectedCassetteIndex()) === 0 }">
+        <input type="radio" name="cassette-calibration-selector" value="0" class="radio-option" data-bind="checked: cassetteCalibrations.selectedCassetteIndex"/>
+        REACTOR 1
+      </label>
+      
+	  <label class="sequence-button" data-bind="css: { 'selected-sequence-button': parseInt(cassetteCalibrations.selectedCassetteIndex()) === 1 }">
+        <input type="radio" name="cassette-calibration-selector" value="1" class="radio-option" data-bind="checked: cassetteCalibrations.selectedCassetteIndex"/>
+        REACTOR 2
+      </label>
+	  
+	  <label class="sequence-button" data-bind="css: { 'selected-sequence-button': parseInt(cassetteCalibrations.selectedCassetteIndex()) === 2 }">
+        <input type="radio" name="cassette-calibration-selector" value="2" class="radio-option" data-bind="checked: cassetteCalibrations.selectedCassetteIndex"/>
+        REACTOR 3
+      </label>
+</div>
+
+<div class="calibrate-section reagents-container">
+<span data-bind="with: cassetteCalibrations">
+
+	<div class="reagent-buttons reagent-buttons-container"><!-- style="display:
+	inline-flex;">-->
+		<div style="display:inherit;">
+                       <div class="wireframe-button" data-bind="visible: !isCalibrating(), click: doCalibrate">CALIBRATE</div>
+
+                       <div class="wireframe-button" data-bind="visible: isCalibrating(), click: stopCalibrate">DONE</div>
+                       <div class="wireframe-button" data-bind="css: {'disabled-button': !isCalibrating() }, click: save">SAVE</div>
+		</div>
+		<div style="display: inherit;">
+                       <div class="reagent_buttons">
+                               <div class="sequence-button" data-bind="css: {'selected-sequence-button' : reagentRobot.gripper.isUp() },
+                                                                click: reagentRobot.gripper.lift">GRIPPER
+                                                                UP</div>
+                               <div class="sequence-button" data-bind="css: {'selected-sequence-button' : reagentRobot.gripper.isDown() },
+                                                                click: reagentRobot.gripper.lower">GRIPPER
+                                                                DOWN</div>
+
+                       </div>
+
+                       <div class="reagent_buttons">
+                               <div class="sequence-button" data-bind="css: {'selected-sequence-button' : reagentRobot.gripper.isOpen() },
+                                                                        click: reagentRobot.gripper.open">OPEN
+                                                                        GRIPPER</div>
+
+                               <div class="sequence-button" data-bind="css: {'selected-sequence-button' : reagentRobot.gripper.isClosed() },
+                                                                        click: reagentRobot.gripper.close">CLOSE
+                                                                        GRIPPER</div>
+
+                       </div>
+
+                       <div class="reagent_buttons">
+                              <div class="sequence-button" data-bind="css: {'selected-sequence-button' : reagentRobot.gasTransfer.isUp() },
+                                                                       click: reagentRobot.gasTransfer.lift">GAS
+                                                                       UP</div>
+                              <div class="sequence-button" data-bind="css: {'selected-sequence-button' : reagentRobot.gasTransfer.isDown() },
+                                                                       click: reagentRobot.gasTransfer.lower">GAS
+                                                                       DOWN</div>
+
+                       </div>
+                </div>
+	</div>
+
+	<div data-bind="template: {name: 'cassette-template', data: selectedCassette()}"></div>
+</span>
+</div>
+</script>

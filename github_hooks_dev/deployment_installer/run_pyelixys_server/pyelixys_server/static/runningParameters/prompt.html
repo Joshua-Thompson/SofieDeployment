@@ -1,0 +1,21 @@
+<script type="text/html" id="prompt-parameters-popup-template">
+  <div id="prompt-parameters-popup">
+    <span class="title">PROMPT parameters:</span>
+    <div class="parameter-fields-container">
+      <ul data-bind="with: data">
+          <li>
+            <span>Message:</span>
+            <span><!--ko text: message --><!--/ko-->
+			&nbsp;</span>
+          </li>
+      </ul>
+	  </div>
+	  <div class="save-note-container">
+	  <span>Save a note about this operation:</span>
+      <textarea placeholder="Click to type a note" data-bind="textInput: $parent.run_note" rows="10" maxlength="1024"/>
+	  </div>
+	  <div class="save-note-button">
+      <input type="button" class="save-note-button" value="Save" data-bind="click: $parent.save_message"/>
+    </div>
+  </div>
+</script>

@@ -1,0 +1,17 @@
+#!/bin/bash
+source ~/.profile
+echo "Setting up eth0 network"
+sudo ifup eth0
+
+sleep 5
+echo "Restarting dnsmasq for ethernet connection"
+sudo service dnsmasq restart
+
+echo "Setting permissions for cbox port /dev/ttyACM0 (wait 60 seconds)..."
+sleep 60
+sudo chmod a+rw /dev/ttyACM0
+
+cd $ELIXYS_PATH
+source $ELIXYS_PATH/bin/activate
+python $ELIXYS_PATH/pyelixys_startup.py
+sleep 30

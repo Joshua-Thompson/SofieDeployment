@@ -1,1 +1,2 @@
-pyinstaller --onefile --windowed installer.py
+pyinstaller -y --windowed installer.spec
+

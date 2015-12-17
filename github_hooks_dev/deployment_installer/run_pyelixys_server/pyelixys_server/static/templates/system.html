@@ -1,0 +1,74 @@
+<script type="text/html" id="system-template">
+  <div class="system-page mainpane" data-bind="sidebarToggle: isSidebarVisible()">
+  <div data-bind="sidebarToggle: true, click: toggleSidebar" id="sidebar-toggle">&equiv;</div>
+      <div id="system-sidebar">
+    <ul style="text-align: center; color: #D7D9DC;">
+    <li>
+        <div data-bind="click: Elixys.initialize">
+            <span class="image-container initialize"></span>
+            <span>INITIALIZE</span>
+          </div>
+    </li>
+    <li>
+        <div data-bind="click: Elixys.unlock_robots">
+            <span class="image-container unlock_robots"></span>
+            <span>UNLOCK</span>
+          </div>
+    </li>
+    </ul>
+    
+    </div>
+    
+    <div class="system-content">
+      <div data-bind="template: { name: 'top-header-template', afterRender: postRender() }"></div>
+      
+      <div class="sequence-button-pad" style="padding-top: 25px;">
+        
+     <label class="sequence-button" data-bind="css: { 'selected-sequence-button': selectedSystemTemplate() === 'videocalibrate-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="checked: selectedSystemTemplate, checkedValue: 'videocalibrate-template'"/>
+        VIDEO
+      </label>
+      
+      <label class="sequence-button" data-bind="css: { 'selected-sequence-button': selectedSystemTemplate() === 'fluidgascalibrate-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="checked: selectedSystemTemplate, checkedValue: 'fluidgascalibrate-template'"/>
+        FLUID
+      </label>
+      
+      <!--<label class="sequence-button" data-bind="css: { 'selected-sequence-button': selectedSystemTemplate() === 'radiationcalibrate-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="checked: selectedSystemTemplate, checkedValue: 'radiationcalibrate-template'"/>
+        RADIATION
+      </label>-->
+      
+      <label class="sequence-button" data-bind="css: { 'selected-sequence-button': selectedSystemTemplate() === 'heatcalibrate-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="checked: selectedSystemTemplate, checkedValue: 'heatcalibrate-template'"/>
+        HEAT
+      </label>
+      <!--
+           <label class="sequence-button" data-bind="css: { 'selected-sequence-button': selectedSystemTemplate() === 'reactorscalibrate-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="checked: selectedSystemTemplate, checkedValue: 'reactorscalibrate-template'"/>
+        REACTORS
+      </label>
+      
+      <label class="sequence-button" data-bind="css: { 'selected-sequence-button': selectedSystemTemplate() === 'reagentscalibrate-template' }">
+        <input type="radio" name="edit-sequence" class="radio-option"
+          data-bind="checked: selectedSystemTemplate, checkedValue: 'reagentscalibrate-template'"/>
+        REAGENTS
+      </label>-->
+      
+      </div>
+
+      <div class="calibration-container" data-bind="template: 'videocalibrate-template', visible: selectedSystemTemplate() == 'videocalibrate-template'"></div>
+      <div class="calibration-container" data-bind="template: 'fluidgascalibrate-template', visible: selectedSystemTemplate() == 'fluidgascalibrate-template'"/>
+      <div class="calibration-container" data-bind="template: 'radiationcalibrate-template', visible: selectedSystemTemplate() == 'radiationcalibrate-template'"/>
+      <div class="calibration-container" data-bind="template: 'heatcalibrate-template', visible: selectedSystemTemplate() == 'heatcalibrate-template'"/>
+      <div class="calibration-container" data-bind="template: 'reactorscalibrate-template', visible: selectedSystemTemplate() == 'reactorscalibrate-template'"/>
+      <div class="calibration-container" data-bind="template: 'reagentscalibrate-template', visible: selectedSystemTemplate() == 'reagentscalibrate-template'"/>
+    </div>
+  </div>
+</script>
+
