@@ -127,18 +127,24 @@ class Updater(object):
             latest.path = "%s/%s" % (self.sftp.getcwd(),str(latest))
         return latest
 
+    def decrypt_zip(self, version_to_copy_path):
+        return decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
+
     def copy_elixys_to_machine(self, version_to_copy_path):
         self.go_app_home_dir()
 
         self.updating_from_version = self.get_latest()
 
-        zip,zip_io = decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
+        zip,zip_io = self.decrypt_zip(version_to_copy_path)
         self.updating_to_version = version.determine_elixys_version(zip)
         if self.updating_to_version == self.updating_from_version:
             try:
                 self.prompt_reinstall()
             except:
                 return False
+        elif self.updating_to_version < self.updating_from_version:
+            logger.info("Uploading an older version of Elixys than what you already have is not permitted ")
+            return False
 
         zip_io.seek(0,os.SEEK_END)
         file_size = zip_io.tell()

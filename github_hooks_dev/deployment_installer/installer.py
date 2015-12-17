@@ -5,6 +5,7 @@ import os
 from PyQt5 import QtWidgets, uic,QtGui
 import PyQt5.QtCore as QtCore
 import updater
+import version
 from logger import logger, hdlr
 from qt_threads.authenticator import Authenticator
 from qt_threads.copierthread import CopierThread
@@ -20,6 +21,8 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         super(ElixysInstaller, self).__init__()
         self.copier_thread = None
         self.runner_thread = None
+        self.monitor_thread = None
+        self.selected_upload_version = None
         self.initUI()
         self.move(400,100)
         self.show()
@@ -32,10 +35,10 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.dialog_btn = self.findChild(QtWidgets.QPushButton,"upload_btn")
         self.dialog_btn.hide()
         self.dialog_btn.clicked.connect(self.install_elixys_version)
-        self.cancel_install = self.findChild(QtWidgets.QPushButton,"no_btn")
-        self.cancel_install.clicked.connect(self.abort_update)
-        self.overwrite_copy = self.findChild(QtWidgets.QPushButton,"yes_btn")
-        self.overwrite_copy.clicked.connect(self.overwrite_install)
+        self.no_btn = self.findChild(QtWidgets.QPushButton,"no_btn")
+        self.no_btn.clicked.connect(self.no_response)
+        self.yes_btn = self.findChild(QtWidgets.QPushButton,"yes_btn")
+        self.yes_btn.clicked.connect(self.yes_response)
         self.status_label = self.findChild(QtWidgets.QTextEdit, "status_txt")
         self.app_is_up = self.findChild(QtWidgets.QToolButton, "app_is_up")
         self.box_is_up = self.findChild(QtWidgets.QToolButton, "box_is_up")
@@ -54,6 +57,10 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.authenticate()
         self.action_connection = self.findChild(QtWidgets.QAction, "actionConnections")
         self.action_show_network = self.findChild(QtWidgets.QAction, "actionOpen_Network")
+        self.action_calibration_mgr = self.findChild(QtWidgets.QAction, "actionCalibration_Manager")
+        self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
+        self.action_state_monitor = self.findChild(QtWidgets.QAction, "actionState_Monitor")
+        self.action_state_monitor.triggered.connect(self.open_state_monitor)
         self.action_connection.triggered.connect(self.open_settings)
         self.action_show_network.triggered.connect(self.open_network)
 
@@ -63,6 +70,16 @@ class ElixysInstaller(QtWidgets.QMainWindow):
     def open_network(self):
         self.network_browser = ElixysBrowser()
         self.network_browser.show()
+
+    def open_calibration_mgr(self):
+        self.network_browser = ElixysBrowser()
+        self.network_browser.show()
+        self.network_browser.view.load("http://%s:5000/calibration_manager" % self.updater.hostname)
+
+    def open_state_monitor(self):
+        self.network_browser = ElixysBrowser()
+        self.network_browser.show()
+        self.network_browser.view.load("http://%s:5000/state_monitor.html" % self.updater.hostname)
 
     def restart_server(self, pos):
         self.app_is_up.hide()
@@ -100,8 +117,8 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.authenticator.start()
 
     def show_buttons(self, do_show):
-        self.overwrite_copy.setVisible(do_show)
-        self.cancel_install.setVisible(do_show)
+        self.yes_btn.setVisible(do_show)
+        self.no_btn.setVisible(do_show)
 
     def pyelixys_is_up(self, is_up):
         self.app_is_up.setChecked(is_up)
@@ -122,27 +139,47 @@ class ElixysInstaller(QtWidgets.QMainWindow):
                 '.')
 
         if file_name and file_name[0] != "":
-            file_name = file_name[0]
-            t_update = threading.Thread(target=self.updater.do_install, args=(file_name,))
-            t_update.start()
-            self.dialog_btn.hide()
-
-            self.monitor_thread = MonitorInstall(t_update)
-            self.monitor_thread.show_buttons.connect(self.show_buttons)
-            self.monitor_thread.finished_updating.connect(self.finished_updating)
-            self.monitor_thread.start()
+            file_version = file_name[0]
+            try:
+                zip, zip_io = self.updater.decrypt_zip(file_version)
+                ver = version.determine_elixys_version(zip)
+                self.selected_upload_version = file_version
+                logger.info("Are you sure you would like to upload %s" % ver)
+                self.show_buttons(True)
+            except Exception as e:
+                logger.error("Failed to recognize this zip as a Pyelixys version")
         else:
             logger.info("Cancelling Upload")
+
+    def upload_elixys_version(self):
+        file_name = self.selected_upload_version
+        t_update = threading.Thread(target=self.updater.do_install, args=(file_name,))
+        t_update.start()
+        self.dialog_btn.hide()
+
+        self.monitor_thread = MonitorInstall(t_update)
+        self.monitor_thread.show_buttons.connect(self.show_buttons)
+        self.monitor_thread.finished_updating.connect(self.finished_updating)
+        self.monitor_thread.start()
 
     def log_message(self, log_level, message):
         self.status_label.append(message)
         self.status_label.moveCursor(QtGui.QTextCursor.End)
 
-    def overwrite_install(self):
-        updater.overwrite_prompt.clear()
+    def yes_response(self):
+        if self.monitor_thread and self.monitor_thread.isRunning():
+            updater.overwrite_prompt.clear()
+        elif self.selected_upload_version:
+            self.show_buttons(False)
+            self.upload_elixys_version()
 
-    def abort_update(self):
-        updater.abort.set()
+    def no_response(self):
+        if self.monitor_thread and self.monitor_thread.isRunning():
+            updater.abort.set()
+        elif self.selected_upload_version:
+            logger.info("Cancelling install")
+            self.selected_upload_version = None
+            self.show_buttons(False)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

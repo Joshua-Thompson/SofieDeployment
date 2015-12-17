@@ -13,7 +13,10 @@ class NetworkApp(QWebEngineView):
         self.setPage(self._page)
 
     def load_home_page(self):
-        self._page.load(QtCore.QUrl("http://sofiebio.herokuapp.com/"))
+        self.load("http://sofiebio.herokuapp.com/")
+
+    def load(self, url):
+        self._page.load(QtCore.QUrl(url))
 
     def deleteLater(self):
         super(NetworkApp, self).deleteLater()

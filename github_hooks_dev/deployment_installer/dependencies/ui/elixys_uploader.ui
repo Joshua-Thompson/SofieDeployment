@@ -168,6 +168,8 @@
     </property>
     <addaction name="actionConnections"/>
     <addaction name="actionOpen_Network"/>
+    <addaction name="actionCalibration_Manager"/>
+    <addaction name="actionState_Monitor"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
@@ -179,6 +181,16 @@
   <action name="actionOpen_Network">
    <property name="text">
     <string>Open Network</string>
+   </property>
+  </action>
+  <action name="actionCalibration_Manager">
+   <property name="text">
+    <string>Calibration Manager</string>
+   </property>
+  </action>
+  <action name="actionState_Monitor">
+   <property name="text">
+    <string>State Monitor</string>
    </property>
   </action>
  </widget>
