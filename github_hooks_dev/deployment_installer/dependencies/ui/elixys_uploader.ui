@@ -185,7 +185,6 @@
     <string>Open Network</string>
    </property>
   </action>
-<<<<<<< HEAD
   <action name="actionCalibration_Manager">
    <property name="text">
     <string>Calibration Manager</string>
@@ -199,6 +198,8 @@
   <action name="actionPyelixys_App">
    <property name="text">
     <string>Pyelixys App</string>
+   </property>
+  </action>
   <action name="actionStart_Simulator">
    <property name="text">
     <string>Start Simulator</string>
