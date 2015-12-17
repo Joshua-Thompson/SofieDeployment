@@ -35,7 +35,10 @@ class ElixysBrowser(QMainWindow):
         self.setCentralWidget(self.view)
 
     def load_progress(self,progress):
-        self.statusBar().showMessage("Loading... %i" % progress)
+        if progress < 100:
+            self.statusBar().showMessage("Loading... %i" % progress)
+        else:
+            self.load_finished(True)
 
     def load_finished(self,ok):
         self.statusBar().clearMessage()

@@ -170,6 +170,7 @@
     <addaction name="actionOpen_Network"/>
     <addaction name="actionCalibration_Manager"/>
     <addaction name="actionState_Monitor"/>
+    <addaction name="actionPyelixys_App"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
@@ -191,6 +192,11 @@
   <action name="actionState_Monitor">
    <property name="text">
     <string>State Monitor</string>
+   </property>
+  </action>
+  <action name="actionPyelixys_App">
+   <property name="text">
+    <string>Pyelixys App</string>
    </property>
   </action>
  </widget>

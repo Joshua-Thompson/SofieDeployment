@@ -58,9 +58,11 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.action_connection = self.findChild(QtWidgets.QAction, "actionConnections")
         self.action_show_network = self.findChild(QtWidgets.QAction, "actionOpen_Network")
         self.action_calibration_mgr = self.findChild(QtWidgets.QAction, "actionCalibration_Manager")
-        self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
         self.action_state_monitor = self.findChild(QtWidgets.QAction, "actionState_Monitor")
+        self.action_elixys_app = self.findChild(QtWidgets.QAction, "actionPyelixys_App")
+        self.action_elixys_app.triggered.connect(self.open_elixys_app)
         self.action_state_monitor.triggered.connect(self.open_state_monitor)
+        self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
         self.action_connection.triggered.connect(self.open_settings)
         self.action_show_network.triggered.connect(self.open_network)
 
@@ -75,6 +77,11 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.network_browser = ElixysBrowser()
         self.network_browser.show()
         self.network_browser.view.load("http://%s:5000/calibration_manager" % self.updater.hostname)
+
+    def open_elixys_app(self):
+        self.network_browser = ElixysBrowser()
+        self.network_browser.show()
+        self.network_browser.view.load("http://%s:5000/static/index.html" % self.updater.hostname)
 
     def open_state_monitor(self):
         self.network_browser = ElixysBrowser()
