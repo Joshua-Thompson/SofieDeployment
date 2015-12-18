@@ -1,8 +1,0 @@
-<script type="text/html" id="videocalibrate-template">
-	  <div class="calibrate-section video-container" data-bind="with: cameraCalibrations">
-		<div class="wireframe-button" data-bind="css: { 'disabled-button': !cameraPositionChanged() }, click: calibrateCameraPositions">SAVE POSITIONS</div>
-	  	<div class="camera-feeds">
-		  <div data-bind="template: { name: 'camera-template', foreach: cameras}"></div>
-	  	</div>
-	  </div>
-</script>

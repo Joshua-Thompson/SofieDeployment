@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Elixys Server
-Exec=gnome-terminal -e /usr/sbin/elixys
-Comment=Starts Elixys
-Terminal=False
-Type=Application
-Categories=Utility;Application;
