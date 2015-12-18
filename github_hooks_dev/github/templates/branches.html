@@ -1,0 +1,38 @@
+<html>
+    <head>
+    </head>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-debug.js"></script>
+
+    <script type="text/javascript">
+        var branches = JSON.parse({{releases|tojson|safe}});
+
+        branches.download = function(branch){
+            var anchor = $("<a>");
+            var url = "/github/branches/download?ref=" + encodeURIComponent(branch.ref);
+            anchor.attr('href', url);
+            anchor[0].click();
+        }
+
+        $(function(){
+            ko.applyBindings(branches);
+        });
+    </script>
+    <style>
+        .release{
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <body>
+        {% include 'branch.html' %}
+        <div id="sofie_versions">
+            
+            <span data-bind="template: {name: 'github_branch',
+                                        data: branches, as: 'branch'}">
+
+            </span> 
+        </div>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+pycrypto==2.6.1
+paramiko==1.16.0
+PyInstaller==3.0
+configobj==5.0.6
