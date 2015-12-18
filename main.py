@@ -16,7 +16,7 @@ def index():
 
 @app.route('/test')
 def test():
-    return "---hello world---"
+    return "---hello world!---"
 
 @app.errorhandler(404)
 def page_not_found(e):
