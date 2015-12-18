@@ -1,6 +1,8 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication,QStatusBar,QMainWindow
 from PyQt5 import QtCore, uic
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile, QWebEnginePage
 
 class NetworkApp(QWebEngineView):
@@ -15,6 +17,9 @@ class NetworkApp(QWebEngineView):
     def load_home_page(self):
         self.load("http://sofiebio.herokuapp.com/")
 
+    def download_simulator(self):
+        self.load("http://localhost:8080/github/latests_exe")
+
     def load(self, url):
         self._page.load(QtCore.QUrl(url))
 
@@ -24,10 +29,13 @@ class NetworkApp(QWebEngineView):
         self.profile.deleteLater()
 
 class ElixysBrowser(QMainWindow):
+    download_completed = pyqtSignal()
+
     def __init__(self):
         super(ElixysBrowser, self).__init__()
         self.view = NetworkApp()
         self.download = None
+        self.downloading_simulator = False
         self.view.page().loadProgress.connect(self.load_progress)
         self.view.page().loadFinished.connect(self.load_finished)
         self.view.profile.downloadRequested.connect(self.download_requested)
@@ -43,14 +51,23 @@ class ElixysBrowser(QMainWindow):
     def load_finished(self,ok):
         self.statusBar().clearMessage()
 
+    def download_simulator(self):
+        self.downloading_simulator = True
+        self.view.download_simulator()
+
     def download_in_progress(self,bytesReceived, bytesTotal):
         self.statusBar().showMessage( "Downloaded ... %d" % bytesReceived )
 
     def download_complete(self):
         self.statusBar().clearMessage()
+        self.downloading_simulator = False
+        self.download_completed.emit()
 
     def download_requested(self,down):
         self.download = down
+        if self.downloading_simulator:
+            path = os.path.join(os.getcwd(), "simulator.zip")
+            self.download.setPath(path)
         self.statusBar().showMessage("Downloading...")
         self.download.finished.connect(self.download_complete)
         self.download.downloadProgress.connect(self.download_in_progress)

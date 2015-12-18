@@ -12,7 +12,7 @@ import re
 from configobj import ConfigObj
 from threading import Event
 from paramiko.py3compat import input
-from decrypt import decrypt_zip,encrypt_passcodes,decrypt_passcodes
+from decrypt import decrypt_zip as do_decrypt_zip,encrypt_passcodes,decrypt_passcodes
 import version
 
 ELIXYS_HOST_IP = None
@@ -128,7 +128,7 @@ class Updater(object):
         return latest
 
     def decrypt_zip(self, version_to_copy_path):
-        return decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
+        return do_decrypt_zip(DECRYPTION_KEY, version_to_copy_path)
 
     def copy_elixys_to_machine(self, version_to_copy_path):
         self.go_app_home_dir()

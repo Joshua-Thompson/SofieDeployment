@@ -2,10 +2,12 @@
 import sys
 import threading
 import os
+import platform
 from PyQt5 import QtWidgets, uic,QtGui
 import PyQt5.QtCore as QtCore
 import updater
 import version
+from zipfile import ZipFile
 from logger import logger, hdlr
 import threading
 import time
@@ -28,6 +30,10 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.initUI()
         self.move(400,100)
         self.show()
+
+    @property
+    def simulator_installed(self):
+        return os.path.exists("run_pyelixys_server")
 
     def initUI(self):
         ui_path = os.path.join('dependencies','ui', 'elixys_uploader.ui')
@@ -67,19 +73,53 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
         self.action_start_simulator = self.findChild(QtWidgets.QAction, "actionStart_Simulator")
         self.action_start_simulator.triggered.connect(self.run_sim)
+        if not self.simulator_installed:
+            self.action_start_simulator.setText("Download Simulator")
+
         self.action_connection.triggered.connect(self.open_settings)
         self.action_show_network.triggered.connect(self.open_network)
 
     def open_settings(self):
         self.settings.show()
 
+    def get_os(self):
+        system = platform.system().lower()
+        if system == "windows":
+            return system
+        elif system == "linux":
+            return "ubuntu"
+        elif os.name == "posix":
+            return "osx"
+        else:
+            logger.info("unknown system")
+            return None
+
+
     def run_sim(self):
-        t = threading.Thread(target=os.system, args=("cd run_pyelixys_server & run_pyelixys_server.exe sim",))
-        t.start()
-        time.sleep(8)
-        self.network_browser = ElixysBrowser()
-        self.network_browser.view.load("http://localhost:5000/static/index.html")
-        self.network_browser.show()
+        if self.simulator_installed:
+            if self.get_os() == "windows":
+                exe = "& run_pyelixys_server.exe"
+            else:
+                exe = "; ./run_pyelixys_server"
+                os.system("chmod 755 run_pyelixys_server/run_pyelixys_server")
+            t = threading.Thread(target=os.system, args=("cd run_pyelixys_server %s sim" % exe,))
+            t.start()
+            time.sleep(8)
+            self.network_browser = ElixysBrowser()
+            self.network_browser.view.load("http://localhost:5000/static/index.html")
+            self.network_browser.show()
+        else: # Download it first
+            self.network_browser = ElixysBrowser()
+            def unzip_simulator():
+                self.network_browser.close()
+                zip = ZipFile("simulator.zip", "r")
+                zip.extractall()
+                self.action_start_simulator.setText("Start Simulator")
+                os.remove("simulator.zip")
+
+            self.network_browser.download_completed.connect(unzip_simulator)
+            self.network_browser.download_simulator()
+            self.network_browser.show()
 
     def open_network(self):
         self.network_browser = ElixysBrowser()
