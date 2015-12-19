@@ -17,8 +17,8 @@ class NetworkApp(QWebEngineView):
     def load_home_page(self):
         self.load("http://sofiebio.herokuapp.com/")
 
-    def download_simulator(self):
-        self.load("http://localhost:8080/github/latests_exe")
+    def download_simulator(self, os):
+        self.load("http://sofiebio.herokuapp.com/github/latests_exe?os=%s" % os)
 
     def load(self, url):
         self._page.load(QtCore.QUrl(url))
@@ -51,9 +51,9 @@ class ElixysBrowser(QMainWindow):
     def load_finished(self,ok):
         self.statusBar().clearMessage()
 
-    def download_simulator(self):
+    def download_simulator(self, os):
         self.downloading_simulator = True
-        self.view.download_simulator()
+        self.view.download_simulator(os)
 
     def download_in_progress(self,bytesReceived, bytesTotal):
         self.statusBar().showMessage( "Downloaded ... %d" % bytesReceived )

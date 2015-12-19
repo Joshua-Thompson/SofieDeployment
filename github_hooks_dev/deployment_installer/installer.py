@@ -118,7 +118,7 @@ class ElixysInstaller(QtWidgets.QMainWindow):
                 os.remove("simulator.zip")
 
             self.network_browser.download_completed.connect(unzip_simulator)
-            self.network_browser.download_simulator()
+            self.network_browser.download_simulator(self.get_os())
             self.network_browser.show()
 
     def open_network(self):
