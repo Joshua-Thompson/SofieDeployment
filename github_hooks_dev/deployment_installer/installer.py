@@ -72,15 +72,15 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.action_elixys_app = self.findChild(QtWidgets.QAction, "actionPyelixys_App")
         self.action_start_simulator = self.findChild(QtWidgets.QAction, "actionStart_Simulator")
         self.action_kill_simulator = self.findChild(QtWidgets.QAction, "actionKill_Simulator")
+        self.action_get_latest_simulator = self.findChild(QtWidgets.QAction, "actionGet_Latest_Simulator")
 
         self.action_elixys_app.triggered.connect(self.open_elixys_app)
         self.action_state_monitor.triggered.connect(self.open_state_monitor)
         self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
         self.action_kill_simulator.triggered.connect(self.kill_simulator)
-
         self.action_start_simulator.triggered.connect(self.run_sim)
-        if not self.simulator_installed:
-            self.action_start_simulator.setText("Download Simulator")
+        self.action_get_latest_simulator.triggered.connect(self.download_simulator)
+        self.action_start_simulator.setEnabled(self.simulator_installed)
 
         self.action_connection.triggered.connect(self.open_settings)
         self.action_show_network.triggered.connect(self.open_network)
@@ -102,45 +102,65 @@ class ElixysInstaller(QtWidgets.QMainWindow):
 
     def run_sim(self):
         if self.simulator_installed:
+            logger.info("Starting the simulator")
             if self.get_os() == "windows":
                 exe = "& run_pyelixys_server.exe"
             else:
                 exe = "; ./run_pyelixys_server"
                 os.system("chmod 755 run_pyelixys_server/run_pyelixys_server")
-            logger.info("Starting the simulator")
+
             self.simulator_process = Process(target=os.system, args=("cd run_pyelixys_server %s sim" % exe,))
+            time.sleep(.5)
             self.simulator_process.start()
+            self.action_start_simulator.setEnabled(False)
+            self.action_get_latest_simulator.setEnabled(False)
+            self.action_kill_simulator.setEnabled(True)
             time.sleep(8)
             self.network_browser = ElixysBrowser()
             self.network_browser.view.load("http://localhost:5000/static/index.html")
             self.network_browser.show()
-        else: # Download it first
-            self.network_browser = ElixysBrowser()
-            def unzip_simulator():
-                logger.info("Unzipping the simulator")
-                self.network_browser.close()
-                zip = ZipFile("simulator.zip", "r")
-                zip.extractall()
-                self.action_start_simulator.setText("Start Simulator")
-                #os.remove("simulator.zip")
-            logger.info("Downloading the simulator")
-            self.network_browser.download_completed.connect(unzip_simulator)
-            self.network_browser.download_simulator(self.get_os())
-            self.network_browser.show()
+        else:
+            logger.error("Simulator has not been installed")
+
+    def unzip_simulator(self):
+        self.network_browser.close()
+        import threading
+        logger.info("Unzipping the simulator")
+        t = threading.Thread(target=self.do_unzip, args=("simulator.zip",))
+        t.start()
+
+    def do_unzip(self, zip_name):
+        zip = ZipFile(zip_name, "r")
+        zip.extractall()
+        self.action_start_simulator.setEnabled(True)
+        logger.info("Finished unzipping")
+
+    def download_simulator(self):
+        self.network_browser = ElixysBrowser()
+        logger.info("Downloading the simulator")
+        self.network_browser.download_completed.connect(self.unzip_simulator)
+        self.network_browser.download_simulator(self.get_os())
+        self.network_browser.show()
 
     def kill_process(self, pid):
-        process = psutil.Process(pid)
-        for child in process.children():
-            message = "Aborting child process %i" % child.pid
+        try:
+            process = psutil.Process(pid)
+            for child in process.children():
+                message = "Aborting child process %i" % child.pid
+                logger.info(message)
+                self.kill_process(child.pid)
+            message = "Aborting process %i" % pid
             logger.info(message)
-            self.kill_process(child.pid)
-        message = "Aborting process %i" % pid
-        logger.info(message)
-        process.terminate()
+            process.terminate()
+        except psutil.NoSuchProcess as e:
+            pass
 
     def kill_simulator(self):
         proc_id = self.simulator_process.pid
         self.kill_process(proc_id)
+        self.action_get_latest_simulator.setEnabled(True)
+        self.action_kill_simulator.setEnabled(False)
+        self.action_start_simulator.setEnabled(True)
 
     def open_network(self):
         self.network_browser = ElixysBrowser()
@@ -202,6 +222,9 @@ class ElixysInstaller(QtWidgets.QMainWindow):
 
     def pyelixys_is_up(self, is_up):
         self.app_is_up.setChecked(is_up)
+        self.action_calibration_mgr.setEnabled(is_up)
+        self.action_state_monitor.setEnabled(is_up)
+        self.action_elixys_app.setEnabled(is_up)
         self.app_is_up.show()
 
     def elixys_box_is_up(self, is_up):
