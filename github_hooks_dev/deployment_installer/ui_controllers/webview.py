@@ -34,6 +34,7 @@ class ElixysBrowser(QMainWindow):
     def __init__(self):
         super(ElixysBrowser, self).__init__()
         self.view = NetworkApp()
+        self.setWindowTitle("Sofie Browser")
         self.download = None
         self.downloading_simulator = False
         self.view.page().loadProgress.connect(self.load_progress)
