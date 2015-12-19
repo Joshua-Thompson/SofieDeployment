@@ -171,10 +171,17 @@
     <addaction name="actionCalibration_Manager"/>
     <addaction name="actionState_Monitor"/>
     <addaction name="actionPyelixys_App"/>
+   </widget>
+   <widget class="QMenu" name="menuSimulator">
+    <property name="title">
+     <string>Simulator</string>
+    </property>
+    <addaction name="separator"/>
     <addaction name="actionStart_Simulator"/>
     <addaction name="actionKill_Simulator"/>
    </widget>
    <addaction name="menuSettings"/>
+   <addaction name="menuSimulator"/>
   </widget>
   <action name="actionConnections">
    <property name="text">
