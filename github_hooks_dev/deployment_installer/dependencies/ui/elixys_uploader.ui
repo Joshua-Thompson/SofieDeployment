@@ -153,7 +153,7 @@
      <x>0</x>
      <y>0</y>
      <width>636</width>
-     <height>31</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -172,6 +172,7 @@
     <addaction name="actionState_Monitor"/>
     <addaction name="actionPyelixys_App"/>
     <addaction name="actionStart_Simulator"/>
+    <addaction name="actionKill_Simulator"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
@@ -203,6 +204,11 @@
   <action name="actionStart_Simulator">
    <property name="text">
     <string>Start Simulator</string>
+   </property>
+  </action>
+  <action name="actionKill_Simulator">
+   <property name="text">
+    <string>Kill Simulator</string>
    </property>
   </action>
  </widget>

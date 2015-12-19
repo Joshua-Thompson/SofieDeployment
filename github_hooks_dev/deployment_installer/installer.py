@@ -7,9 +7,10 @@ from PyQt5 import QtWidgets, uic,QtGui
 import PyQt5.QtCore as QtCore
 import updater
 import version
+import psutil
 from zipfile import ZipFile
 from logger import logger, hdlr
-import threading
+from multiprocessing import Process
 import time
 from qt_threads.authenticator import Authenticator
 from qt_threads.copierthread import CopierThread
@@ -26,6 +27,7 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.copier_thread = None
         self.runner_thread = None
         self.monitor_thread = None
+        self.simulator_process = None
         self.selected_upload_version = None
         self.initUI()
         self.move(400,100)
@@ -68,10 +70,14 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         self.action_calibration_mgr = self.findChild(QtWidgets.QAction, "actionCalibration_Manager")
         self.action_state_monitor = self.findChild(QtWidgets.QAction, "actionState_Monitor")
         self.action_elixys_app = self.findChild(QtWidgets.QAction, "actionPyelixys_App")
+        self.action_start_simulator = self.findChild(QtWidgets.QAction, "actionStart_Simulator")
+        self.action_kill_simulator = self.findChild(QtWidgets.QAction, "actionKill_Simulator")
+
         self.action_elixys_app.triggered.connect(self.open_elixys_app)
         self.action_state_monitor.triggered.connect(self.open_state_monitor)
         self.action_calibration_mgr.triggered.connect(self.open_calibration_mgr)
-        self.action_start_simulator = self.findChild(QtWidgets.QAction, "actionStart_Simulator")
+        self.action_kill_simulator.triggered.connect(self.kill_simulator)
+
         self.action_start_simulator.triggered.connect(self.run_sim)
         if not self.simulator_installed:
             self.action_start_simulator.setText("Download Simulator")
@@ -94,7 +100,6 @@ class ElixysInstaller(QtWidgets.QMainWindow):
             logger.info("unknown system")
             return None
 
-
     def run_sim(self):
         if self.simulator_installed:
             if self.get_os() == "windows":
@@ -102,8 +107,9 @@ class ElixysInstaller(QtWidgets.QMainWindow):
             else:
                 exe = "; ./run_pyelixys_server"
                 os.system("chmod 755 run_pyelixys_server/run_pyelixys_server")
-            t = threading.Thread(target=os.system, args=("cd run_pyelixys_server %s sim" % exe,))
-            t.start()
+            logger.info("Starting the simulator")
+            self.simulator_process = Process(target=os.system, args=("cd run_pyelixys_server %s sim" % exe,))
+            self.simulator_process.start()
             time.sleep(8)
             self.network_browser = ElixysBrowser()
             self.network_browser.view.load("http://localhost:5000/static/index.html")
@@ -111,15 +117,30 @@ class ElixysInstaller(QtWidgets.QMainWindow):
         else: # Download it first
             self.network_browser = ElixysBrowser()
             def unzip_simulator():
+                logger.info("Unzipping the simulator")
                 self.network_browser.close()
                 zip = ZipFile("simulator.zip", "r")
                 zip.extractall()
                 self.action_start_simulator.setText("Start Simulator")
                 #os.remove("simulator.zip")
-
+            logger.info("Downloading the simulator")
             self.network_browser.download_completed.connect(unzip_simulator)
             self.network_browser.download_simulator(self.get_os())
             self.network_browser.show()
+
+    def kill_process(self, pid):
+        process = psutil.Process(pid)
+        for child in process.children():
+            message = "Aborting child process %i" % child.pid
+            logger.info(message)
+            self.kill_process(child.pid)
+        message = "Aborting process %i" % pid
+        logger.info(message)
+        process.terminate()
+
+    def kill_simulator(self):
+        proc_id = self.simulator_process.pid
+        self.kill_process(proc_id)
 
     def open_network(self):
         self.network_browser = ElixysBrowser()
