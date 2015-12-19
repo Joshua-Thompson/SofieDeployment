@@ -115,7 +115,7 @@ class ElixysInstaller(QtWidgets.QMainWindow):
                 zip = ZipFile("simulator.zip", "r")
                 zip.extractall()
                 self.action_start_simulator.setText("Start Simulator")
-                os.remove("simulator.zip")
+                #os.remove("simulator.zip")
 
             self.network_browser.download_completed.connect(unzip_simulator)
             self.network_browser.download_simulator(self.get_os())
