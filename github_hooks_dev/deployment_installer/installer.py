@@ -3,6 +3,7 @@ import sys
 import threading
 import os
 import platform
+import subprocess
 from PyQt5 import QtWidgets, uic,QtGui
 import PyQt5.QtCore as QtCore
 import updater
@@ -103,15 +104,18 @@ class ElixysInstaller(QtWidgets.QMainWindow):
     def run_sim(self):
         if self.simulator_installed:
             logger.info("Starting the simulator")
+            proc = None
+
             if self.get_os() == "windows":
-                exe = "& run_pyelixys_server.exe"
+                self.simulator_process = subprocess.Popen("run_pyelixys_server\\run_pyelixys_server.exe sim", cwd="run_pyelixys_server")
+                #exe = "& run_pyelixys_server.exe"
             else:
                 exe = "; ./run_pyelixys_server"
                 os.system("chmod 755 run_pyelixys_server/run_pyelixys_server")
 
-            self.simulator_process = Process(target=os.system, args=("cd run_pyelixys_server %s sim" % exe,))
+            #self.simulator_process = Process(target=os.system, args=("cd run_pyelixys_server %s sim" % exe,))
             time.sleep(.5)
-            self.simulator_process.start()
+            #self.simulator_process.start()
             self.action_start_simulator.setEnabled(False)
             self.action_get_latest_simulator.setEnabled(False)
             self.action_kill_simulator.setEnabled(True)

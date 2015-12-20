@@ -41,7 +41,6 @@ def extra_datas(mydir):
 
 # append the 'data' dir
 a.datas += extra_datas('dependencies')
-a.datas += extra_datas('run_pyelixys_server')
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
