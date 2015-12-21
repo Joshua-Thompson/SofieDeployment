@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['installer.py'],
-             pathex=['Qt'],
+             pathex=['C:\\Python27','C:\\Users\\Justin\\Documents\\SofieDeployment\\github_hooks_dev\\deployment_installer','C:\\Python27\\Lib\\site-packages','C:\\Python27\\libs','C:\\Python27\\DLLs','C:\\Python27\\Scripts',"C:\\Python27\\Lib\\site-packages\\PyQt5"],
              binaries=[('C:\\Qt\\5.5\\msvc2013\\bin\\QtWebEngineProcess.exe', 'bin')],
              datas=[('C:\\Qt\\5.5\\msvc2013\\.tag','bin'),
                     ('C:\\Qt\\5.5\\msvc2013\\icudtl.dat', 'bin'),
@@ -14,12 +14,12 @@ a = Analysis(['installer.py'],
                     ('C:\\Qt\\5.5\\msvc2013\\qtwebengine_resources_200p.pak', 'bin'),
                     ('qt.conf', '.')
                     ],
-             hiddenimports=[],
-             hookspath=[],
-             runtime_hooks=[],
-             excludes=[],
-             win_no_prefer_redirects=False,
-             win_private_assemblies=False,
+             hiddenimports=["PyQt5", "PyQt5.Qt"],
+             hookspath=["C:\\Qt\\5.5\\msvc2013\\bin\\", "C:\\Python27\\Lib\\site-packages\\PyQt5"],
+             runtime_hooks=(''),
+             excludes=None,
+             win_no_prefer_redirects=None,
+             win_private_assemblies=None,
              cipher=block_cipher)
 ##### include mydir in distribution #######
 def extra_datas(mydir):
@@ -41,6 +41,7 @@ def extra_datas(mydir):
 
 # append the 'data' dir
 a.datas += extra_datas('dependencies')
+#a.datas += extra_datas('C:\\Qt\\5.5\\msvc2013\\bin')
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
@@ -48,14 +49,14 @@ exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
           name='installer',
-          debug=False,
-          strip=False,
-          upx=True,
-          console=False )
+          debug=True,
+          strip=None,
+          upx=False,
+          console=True )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
-               strip=False,
+               strip=None,
                upx=True,
                name='installer')
