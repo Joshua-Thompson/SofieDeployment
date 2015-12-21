@@ -41,7 +41,6 @@ def extra_datas(mydir):
 
 # append the 'data' dir
 a.datas += extra_datas('dependencies')
-#a.datas += extra_datas('C:\\Qt\\5.5\\msvc2013\\bin')
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
