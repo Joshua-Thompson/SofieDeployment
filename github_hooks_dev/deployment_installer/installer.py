@@ -38,6 +38,10 @@ class ElixysInstaller(QtWidgets.QMainWindow):
     def simulator_installed(self):
         return os.path.exists("run_pyelixys_server")
 
+    def closeEvent(self, evt):
+        if self.simulator_process:
+            self.kill_simulator()
+
     def initUI(self):
         ui_path = os.path.join('dependencies','ui', 'elixys_uploader.ui')
         uic.loadUi(ui_path, self)
@@ -85,6 +89,7 @@ class ElixysInstaller(QtWidgets.QMainWindow):
 
         self.action_connection.triggered.connect(self.open_settings)
         self.action_show_network.triggered.connect(self.open_network)
+        self.pyelixys_is_up(False)
 
     def open_settings(self):
         self.settings.show()

@@ -240,16 +240,25 @@
    </property>
   </action>
   <action name="actionCalibration_Manager">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Calibration Manager</string>
    </property>
   </action>
   <action name="actionState_Monitor">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>State Monitor</string>
    </property>
   </action>
   <action name="actionPyelixys_App">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Pyelixys App</string>
    </property>

@@ -48,15 +48,15 @@ pyz = PYZ(a.pure, a.zipped_data,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='installer',
-          debug=True,
+          name='elixys_windows',
+          debug=False,
           strip=None,
           upx=False,
-          console=True )
+          console=False )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=None,
                upx=True,
-               name='installer')
+               name='elixys_windows')

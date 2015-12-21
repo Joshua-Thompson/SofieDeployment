@@ -1,2 +1,2 @@
-pyinstaller -y --windowed installer.spec
+pyinstaller -y --hidden-import=PytQt5 --windowed installer.spec
 
