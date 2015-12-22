@@ -8,7 +8,9 @@
 
     <!--scripts-->
     <script type='text/javascript' src='javascript/lib/knockout-3.4.0.js'></script>
-    <script type='text/javascript' src='javascript/lib/jquery-2.1.4.js'></script>
+    <script type='text/javascript' src='javascript/lib/jquery.js'></script>
+    <script type='text/javascript' src='javascript/lib/jquery.min.js'></script>
+    <script type='text/javascript' src='javascript/lib/jquery-ui.min.js'></script>
     <script type='text/javascript' src='javascript/main.js'></script>
     <script type='text/javascript' src='javascript/customer_sites.js'></script>
 
@@ -24,22 +26,25 @@
 
 <!----Customer sites header----->
 <div class="customer-header">
-    <div class="customer-name">SITE</div>
-    <div class="customer-version">VERSION</div>
-    <div class="customer-update-available">UPDATE</div>
-    <div class="customer-prev-download">PREV DOWNLOAD</div>
+    <ul>
+        <li>SITE</li>
+        <li>VERSION</li>
+        <li>UPDATE</li>
+        <li>PREV DOWNLOAD</li>
+    </ul>
 </div>
 
 <br>
 
 <!----Customer sites info------>
-<div class="customer-info">
-    <div class="customer-name" data-bind="text: customers()[0].name"></div>
-    <div class="customer-version" data-bind="text: customers()[0].version"></div>
-    <div class="customer-update-available" data-bind="text: customers()[0].update"></div>
-    <div class="customer-prev-download" data-bind="text: customers()[0].prevDownload"></div>
+<div class="customer-info" data-bind="foreach: {data: customers, as: 'customer'}">
+    <ul>
+        <li><span data-bind="text: customer.name"></span></li>
+        <li><span data-bind="text: customer.version"></span></li>
+        <li><span data-bind="text: customer.update"></span></li>
+        <li><span data-bind="text: customer.prevDownload"></span></li>
+    </ul>
 </div>
-
 
 <script type="text/javascript">
     $(document).ready(function(){

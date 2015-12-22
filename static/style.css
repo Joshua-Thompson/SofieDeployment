@@ -3,19 +3,27 @@
 
 /***Main Page - show customer sites version ***/
 
-.customer-header div, .customer-info div {
-            float: left;
-        }
+.customer-header {
+    float: left;
+    font-weight: bold;
+}
 
-        .customer-header div {
-            font-weight: bold;
-        }
 
-        .create-customer-header div {
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
+.create-customer-header {
+    font-weight: bold;
+    margin-bottom: 30px;
+}
 
-        .customer-name, .customer-version, .customer-update-available, .customer-prev-download {
-            width: 150px;
-        }
+.customer-header  ul,
+.customer-info ul {
+    list-style-type: none;
+    clear: both;
+    padding-left: 0;
+    -webkit-padding-start: 0;
+}
+
+.customer-header  ul li,
+.customer-info ul li {
+    width: 150px;
+    display: inline-block;
+}
