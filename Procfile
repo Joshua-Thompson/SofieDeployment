@@ -1,1 +1,1 @@
-web: gunicorn main:app --log-file -
+web: gunicorn deployment_app:app --log-file -
