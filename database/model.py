@@ -11,6 +11,9 @@ def max_length(length):
     return validate
 
 class User(Document):
+    __collection__ = 'users'
+    __database__ = 'heroku_rvqmr5l8'
+
     structure = {
         'name': unicode,
         'email': unicode,
@@ -20,10 +23,19 @@ class User(Document):
         'email': max_length(120)
     }
     use_dot_notation = True
+
+    def update_from_json(self, json_data):
+        for key in self:
+            if key in json_data:
+                self[key] = json_data[key]
+                self.validate()
+
     def __repr__(self):
         return '<User %r>' % (self.name)
 
 class Customer(Document):
+    __collection__ = 'customers'
+    __database__ = 'heroku_rvqmr5l8'
     structure = {
         'name': unicode,
         'email': unicode,
@@ -37,8 +49,15 @@ class Customer(Document):
         'version': max_length(50),
         'prevDownload': max_length(50),
         'update': max_length(50),
-
     }
+
     use_dot_notation = True
+
+    def update_from_json(self, json_data):
+        for key in self:
+            if key in json_data:
+                self[key] = json_data[key]
+                self.validate()
+
     def __repr__(self):
         return '<Customer %r>' % (self.name)

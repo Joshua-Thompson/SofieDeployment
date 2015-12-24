@@ -8,7 +8,7 @@ var CustomerSites = function() {
         //testing
         //self.customers.push(new Customer());
         //make request to db for customer data then update Customer objects
-        Main.doApiCall('/get_customers', {}, gotCustomers, gotCustomersError)
+        Main.getApiCall('/customers', {}, gotCustomers)
 
     }
 
@@ -25,6 +25,11 @@ var CustomerSites = function() {
 
     function gotCustomers(response){
         var customers = response.customers;
+        if(customers.error){
+            console.log("error getting customers");
+            return;
+        }
+
         if(customers){
             console.log("Received customers data");
             for(var i in customers){
@@ -43,21 +48,21 @@ var CustomerSites = function() {
         }
     }
 
-    function gotCustomersError(response){
-        console.log("error getting customers data");
-    }
-
-
    self.createCustomer = function(name, email){
         var data = {};
         data.create_customer = {};
         data.create_customer.name = name;
         data.create_customer.email = email;
-        Main.doApiCall('/create_customer', data, createdCustomer);
+        Main.postApiCall('/customers', data, createdCustomer);
    }
 
    function createdCustomer(response){
-        var customer = response.create_customer;
+        var customer = response.customers;
+        if(customer.error){
+            console.log("error creating customer");
+            return;
+        }
+
         if(customer){
              var newCustomer = new Customer();
             console.log("created customer");
