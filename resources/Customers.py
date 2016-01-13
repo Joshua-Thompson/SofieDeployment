@@ -28,10 +28,10 @@ class CustomerResource(Resource):
             else:
                 response_data = {"error": "no customer found for specified id"}
 
-            return {"customer": response_data}, 204
+            return {"customer": response_data} #,204
 
         except Exception as e:
-            return {"error": "server customer delete error occured %s" % e}, 204
+            return {"error": "server customer delete error occured %s" % e} #,404
 
     def put(self, customer_id):
         try:
@@ -67,6 +67,6 @@ class CustomersResource(Resource):
             print "customer data %s" % customer_data
             new_customer = add_customer(customer_data)
             new_customer_data = json.loads(new_customer.to_json())
-            return new_customer_data, 201
+            return {"customers":new_customer_data}, 201
         except Exception as e:
             return {"customers": {"error": "server customers post error occured %s" % e}}, 201

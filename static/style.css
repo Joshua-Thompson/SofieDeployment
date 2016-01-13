@@ -11,7 +11,11 @@
 
 .create-customer-header {
     font-weight: bold;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+}
+
+.create-customer-button {
+    cursor: pointer;
 }
 
 .customer-header  ul,
@@ -26,4 +30,8 @@
 .customer-info ul li {
     width: 150px;
     display: inline-block;
+}
+
+.customer-info ul li span.delete-customer {
+    cursor: pointer;
 }
