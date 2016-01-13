@@ -29,6 +29,7 @@ def get_customers():
 
     return customers
 
+
 #add document
 def add_customer(customer_data):
     customer = connection.Customer()
@@ -38,28 +39,3 @@ def add_customer(customer_data):
 
     customer.save()
     return customer
-
-#get user by name (first result)
-def get_first_user_by_login(username, password):
-    user_query = connection.User.find({'name': username, 'password': password})
-    if user_query.count():
-        return user_query.next()
-    else:
-        return None
-
-
-#add new user to db with username / password
-def add_user(user_data):
-    #make sure user doesn't already exist by checking username
-
-    user = connection.User()
-    username = user_data['name']
-    user_query = connection.User.find({'name': username})
-    if user_query.count():
-        return
-    
-    for key in user:
-        user[key] = user_data[key]
-
-    user.save()
-    return user
