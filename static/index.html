@@ -20,9 +20,11 @@
 
 <!----Creat new customer site--->
 <div class="create-customer-header">
-    <div class="creat_customer_button">Create Site</div>
-
+    <div class="create-customer-button" data-bind="click: controller.createCustomer">Create Site</div>
 </div>
+<div>Site Name<input type="text" data-bind="textInput: newSiteName" /></div>
+<div>Site Email<input type="text" data-bind="textInput: newSiteEmail" /></div>
+<div>Site Current Version<input type="text" data-bind="textInput: newSiteVersion" /></div>
 
 <!----Customer sites header----->
 <div class="customer-header">
@@ -37,12 +39,13 @@
 <br>
 
 <!----Customer sites info------>
-<div class="customer-info" data-bind="foreach: {data: customers, as: 'customer'}">
+<div class="customer-info" data-bind="foreach: {data: controller.customers, as: 'customer'}">
     <ul>
         <li><span data-bind="text: customer.name"></span></li>
         <li><span data-bind="text: customer.version"></span></li>
         <li><span data-bind="text: customer.update"></span></li>
         <li><span data-bind="text: customer.prevDownload"></span></li>
+        <li><span class="delete-customer" data-bind="click: customer.delete">delete</span></li>
     </ul>
 </div>
 

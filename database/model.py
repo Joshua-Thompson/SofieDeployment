@@ -17,10 +17,12 @@ class User(Document):
     structure = {
         'name': unicode,
         'email': unicode,
+        'password': unicode,
     }
     validators = {
         'name': max_length(50),
-        'email': max_length(120)
+        'email': max_length(120),
+        'password': max_length(50),
     }
     use_dot_notation = True
 

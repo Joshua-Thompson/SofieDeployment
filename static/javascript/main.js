@@ -15,6 +15,7 @@ var Main = function ($, window) {
         return $.ajax({
           url: request,
           dataType: 'json',
+          contentType: "application/json; charset=utf-8",
           type: 'POST',
           data: JSON.stringify(data),
           success: success,

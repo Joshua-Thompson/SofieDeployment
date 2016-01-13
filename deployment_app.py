@@ -1,16 +1,15 @@
 from flask import Flask, redirect
 from flask_restful import url_for, Api
 
+from blueprints.index_page import index_page
+
 #import resource components
 from resources.Customers import CustomerResource, CustomersResource
 
 app = Flask(__name__)
 api = Api(app)
+app.register_blueprint(index_page)
 
-
-@app.route('/')
-def index():
-    return redirect(url_for('static', filename='index.html'))
 
 ##
 ## Actually setup the Api resource routing here
